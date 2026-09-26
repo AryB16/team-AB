@@ -9,7 +9,7 @@ A small marketplace for buying and selling things nearby. Post an item, browse w
 - **Filter and search** by category chips and free text (titles, descriptions and pickup points), and sort by price.
 - **Listing details:** tap any listing to see its photo, full description and pickup point. Contact details stay hidden until you tap "I'm interested", which then opens WhatsApp or email with a message ready to send.
 - **Listing status:** sellers can mark their own listings as available, reserved or sold. Sold items stay visible but are struck through.
-- **Any currency:** pick a currency at the top and every price is converted at the latest reference rate. The seller's original price is shown next to it.
+- **Any currency:** pick a currency at the top (AED, INR, USD, EUR and GBP are listed first) and every price is converted at the latest reference rate. The seller's original price is shown next to it.
 
 ## Currency conversion
 

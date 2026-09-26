@@ -20,7 +20,7 @@ const STORAGE_KEY = "display-currency";
 const SAVED = "__saved";
 const HEART = `<svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>`;
 // The currencies most visitors here actually use, pinned above the full list.
-const POPULAR = ["AED", "INR", "USD", "EUR", "GBP", "PKR"];
+const POPULAR = ["AED", "INR", "USD", "EUR", "GBP"];
 const FALLBACK_CODES = ["AED", "INR", "USD", "EUR", "GBP"];
 
 const state = {
