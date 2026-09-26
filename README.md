@@ -1,3 +1,15 @@
+# AB Marketplace — team AB
+
+A listings app for buying and selling nearby: post an item, browse and filter what's up, open a listing to see the details, and contact the seller.
+
+Plain HTML, CSS and JavaScript with no build step. Listings are saved in the browser's localStorage. To run it locally, serve the folder with any static server (for example `python3 -m http.server`) and open the page.
+
+## What we built each round
+
+- **Round 1: base build.** Post a listing (title, price, category, condition, description, pickup point, contact), browse all listings, filter by category and search. Clicking a listing opens a detail view with an "I'm interested" button that reveals the seller's contact.
+
+---
+
 # Code & Chaos — Base Repo
 
 This is the starter repo for **Code & Chaos**, an hourly-twist coding challenge. Fork this repo and build on it throughout the event.
