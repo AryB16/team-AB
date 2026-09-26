@@ -1,48 +1,22 @@
 # AB Marketplace
 
-A small marketplace for buying and selling things nearby. Post an item, browse what others have listed, open a listing for the details, and get in touch with the seller.
+## Live site: [team-ab.vercel.app](https://team-ab.vercel.app)
+
+Buy and sell things nearby. Post an item, browse and filter listings, see prices in your own currency, and contact the seller.
 
 ## Features
 
-- **Post a listing** with a photo, title, description, price, condition, category, pickup point and a WhatsApp number or email.
-- **Browse** everything that's up, newest first, with relative times ("3 hours ago") and the seller's name.
-- **Filter and search** by category chips and free text (titles, descriptions and pickup points), and sort by price.
-- **Listing details:** tap any listing to see its photo, full description and pickup point. Contact details stay hidden until you tap "I'm interested", which then opens WhatsApp or email with a message ready to send.
-- **Listing status:** sellers can mark their own listings as available, reserved or sold. Sold items stay visible but are struck through.
-- **Any currency:** pick a currency at the top (AED, INR, USD, EUR and GBP are listed first) and every price is converted at the latest reference rate. The seller's original price is shown next to it.
+- Post listings with a photo, price, condition, category and pickup point
+- Filter by category, search, and sort by price
+- Prices converted to any currency via the [Frankfurter](https://frankfurter.dev) API
+- Seller contact stays hidden until you tap "I'm interested"
+- Save listings, and edit, reserve or mark your own as sold
 
-## Currency conversion
+Plain HTML, CSS and JavaScript. No build step, no dependencies. To run locally: `python3 -m http.server`
 
-Rates come from the [Frankfurter](https://frankfurter.dev) API (no key needed). The app uses Frankfurter's v2 endpoint, which blends several central banks and so covers currencies like AED that the ECB-only v1 API doesn't. If v2 fails it falls back to v1, and if both are down the page says so and shows each seller's original price.
+## Rounds
 
-Rates are requested once per display currency, with that currency as the base, so a single request converts every listing. Responses are cached for an hour.
-
-## Running it
-
-There's no build step. Serve the folder with any static server and open it in a browser:
-
-```
-python3 -m http.server
-```
-
-Then visit http://localhost:8000.
-
-Listings are stored in the browser's localStorage, so each visitor starts with the same sample listings and sees their own posts alongside them.
-
-## Project layout
-
-```
-index.html      page structure, post form and listing dialog
-styles.css      all styling
-js/app.js       rendering, filters, dialogs and the post form
-js/store.js     listings, categories and localStorage persistence
-js/money.js     Frankfurter client and price formatting
-js/icons.js     line icons for each category
-js/photo.js     shrinks uploaded photos before they are saved
-```
-
-## Progress by round
-
-- **Round 1:** posting, browsing, category filter and search, listing detail view with seller contact.
-- **Round 2:** prices converted into the viewer's chosen currency using the Frankfurter API, with sort by converted price.
-- **Round 3 (no new libraries or frameworks):** photo uploads shrunk in the browser with a canvas, saved listings, editing and deleting your own listings, contact details hidden until you say you're interested, and sold listings faded to the bottom. Everything added this round is plain HTML, CSS and JavaScript.
+1. **Base build:** post, browse, filter and search listings
+2. **Currency:** live conversion with the Frankfurter API
+3. **No new libraries:** photos, saved listings, edit/delete, contact reveal, all in vanilla JS
+4. **Reskin:** a completely new theme with the same features
