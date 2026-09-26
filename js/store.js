@@ -15,9 +15,9 @@ export const CATEGORIES = [
 export const CONDITIONS = ["New", "Like new", "Used"];
 
 export const STATUSES = {
-  available: "For sale",
-  reserved: "On hold",
-  sold: "Sold",
+  available: "Unclaimed",
+  reserved: "Claim pending",
+  sold: "Claimed",
 };
 
 const HOUR = 60 * 60 * 1000;

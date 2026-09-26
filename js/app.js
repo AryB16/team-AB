@@ -196,14 +196,14 @@ function render() {
       ? `No items match “${state.query.trim()}”${where}.`
       : saved
         ? "Your watchlist is empty. Open an item and tap Watch to keep it here."
-        : `No property${where} for sale right now.`;
+        : `No unclaimed property${where} right now.`;
   }
 
   const available = all.filter((item) => item.status !== "sold").length;
   const filtered = state.category || state.query.trim();
   $("fact-count").textContent = filtered
     ? `${shown.length} of ${all.length} items shown`
-    : `${available} ${available === 1 ? "item" : "items"} for sale`;
+    : `${available} unclaimed ${available === 1 ? "item" : "items"}`;
 
   for (const chip of chips.children) {
     chip.setAttribute("aria-checked", String(chip.dataset.value === state.category));
@@ -237,7 +237,7 @@ async function loadRates() {
 
 function contactLink(item) {
   const first = item.seller.split(" ")[0];
-  const message = `Hi ${first}, I'd like to buy the "${item.title}" (ref ${caseNumber(item.id)}) from the lost property sale. Is it still available?`;
+  const message = `Hi ${first}, I'd like to claim the "${item.title}" (ref ${caseNumber(item.id)}) from lost property. Is it still available?`;
   if (item.contact.method === "whatsapp") {
     const digits = item.contact.value.replace(/\D/g, "");
     return { href: `https://wa.me/${digits}?text=${encodeURIComponent(message)}`, label: "Message the officer on WhatsApp" };
@@ -274,7 +274,7 @@ function fillDetail(item) {
   else if (interested) contact.textContent = `Contact released: reachable on ${via}`;
   else {
     // Blacked out like a redacted form until the visitor asks to buy.
-    contact.innerHTML = `<span class="redacted" aria-hidden="true">████████████████</span><span class="visually-hidden">Officer contact details hidden until you request to buy</span>`;
+    contact.innerHTML = `<span class="redacted" aria-hidden="true">████████████████</span><span class="visually-hidden">Officer contact details hidden until you make a claim</span>`;
   }
 
   const actions = $("detail-actions");
@@ -283,7 +283,7 @@ function fillDetail(item) {
   if (item.mine) {
     const label = document.createElement("p");
     label.className = "actions-label";
-    label.textContent = "Update sale status";
+    label.textContent = "Update claim status";
     const group = document.createElement("div");
     group.className = "segmented";
     for (const [value, text] of Object.entries(STATUSES)) {
@@ -343,7 +343,7 @@ function fillDetail(item) {
   actions.append(row);
 
   if (item.status === "sold") {
-    row.innerHTML = `<button class="btn btn-primary btn-wide" type="button" disabled>Sold</button>`;
+    row.innerHTML = `<button class="btn btn-primary btn-wide" type="button" disabled>Claimed</button>`;
     row.append(saveButton);
     return;
   }
@@ -352,7 +352,7 @@ function fillDetail(item) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "btn btn-primary btn-wide";
-    button.textContent = "Request to buy";
+    button.textContent = "Claim this item";
     button.addEventListener("click", () => {
       state.interested.add(item.id);
       fillDetail(item);
@@ -361,7 +361,7 @@ function fillDetail(item) {
     if (item.status === "reserved") {
       const hint = document.createElement("p");
       hint.className = "actions-hint";
-      hint.textContent = "Someone has this on hold, but you can still ask to be next in line.";
+      hint.textContent = "Someone has a claim pending, but you can still ask to be next in line.";
       actions.append(hint);
     }
     return;
@@ -376,7 +376,7 @@ function fillDetail(item) {
   link.textContent = label;
   const hint = document.createElement("p");
   hint.className = "actions-hint";
-  hint.textContent = `Request sent. Collect it from ${item.location} and ask for Officer ${item.seller.split(" ").at(-1)}.`;
+  hint.textContent = `Claim sent. Collect it from ${item.location} and ask for Officer ${item.seller.split(" ").at(-1)}.`;
   row.append(link, saveButton);
   actions.append(hint);
 }
@@ -386,14 +386,14 @@ function fillCustody(item, interested) {
   const sold = item.status === "sold";
   const steps = [{ label: "Found & logged", note: `${timeAgo(item.posted)} by Officer ${item.seller}`, done: true }];
   if (item.status === "reserved") {
-    steps.push({ label: "On hold", note: "Another buyer has reserved it", done: true });
+    steps.push({ label: "Claim pending", note: "Someone else has put in a claim", done: true });
   }
   steps.push({
-    label: "Purchase requested",
-    note: sold ? "A buyer came forward" : interested ? "By you, during this visit" : item.mine ? "Waiting for a buyer" : "No requests yet",
+    label: "Claim requested",
+    note: sold ? "A claimant came forward" : interested ? "By you, during this visit" : item.mine ? "Waiting for a claimant" : "No claims yet",
     done: sold || interested,
   });
-  steps.push({ label: "Released to buyer", note: sold ? "Sold and collected" : "Still in the property room", done: sold });
+  steps.push({ label: "Claimed", note: sold ? "Collected from the property room" : "Still in the property room", done: sold });
 
   $("detail-custody").replaceChildren(
     ...steps.map(({ label, note, done }) => {
@@ -528,7 +528,7 @@ function buildFormOptions() {
 }
 
 function contactProblem(method, value) {
-  if (!value) return "Add a way for buyers to reach you.";
+  if (!value) return "Add a way for claimants to reach you.";
   if (method === "whatsapp" && value.replace(/\D/g, "").length < 8) return "Enter a WhatsApp number with country code.";
   if (method === "email" && !/^\S+@\S+\.\S+$/.test(value)) return "Enter a valid email address.";
   return "";
@@ -553,7 +553,7 @@ form.addEventListener("submit", (event) => {
   else if (fields.price.value === "" || !Number.isFinite(price) || price < 0) problem = "Enter a price of 0 or more.";
   else if (!fields.condition.value) problem = "Pick the item's condition.";
   else if (!fields.category.value) problem = "Pick a category.";
-  else if (!location) problem = "Say where buyers collect it.";
+  else if (!location) problem = "Say where it can be collected.";
   else if (!seller) problem = "Add the logging officer's name.";
   else problem = contactProblem(fields.contactMethod.value, contactValue);
 
@@ -630,7 +630,7 @@ function openPostForm(item) {
   formError.textContent = "";
   state.editingId = item?.id ?? null;
   $("post-title").textContent = item ? "Edit listing" : "Log found property";
-  $("post-submit").textContent = item ? "Save changes" : "List for sale";
+  $("post-submit").textContent = item ? "Save changes" : "Log item";
 
   if (item) {
     fields.title.value = item.title;

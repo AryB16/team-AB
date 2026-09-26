@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>AB Precinct · Lost Property Sale</title>
-  <meta name="description" content="Unclaimed lost property from around campus, for sale. Browse, filter, see prices in your currency, and request to buy.">
+  <title>AB Precinct · Lost Property</title>
+  <meta name="description" content="Unclaimed lost property from around campus. Browse, filter, see prices in your currency, and put in a claim.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,24 +14,24 @@
 <body>
   <header class="bar">
     <div class="wrap bar-row">
-      <a class="wordmark" href="./"><span class="wordmark-dept">AB Precinct</span> Lost Property Sale</a>
+      <a class="wordmark" href="./"><span class="wordmark-dept">AB Precinct</span> Lost Property</a>
       <div class="bar-actions">
         <label class="currency-pill" title="Show prices in">
           <span class="pill-label">Price in</span>
           <select id="currency" aria-describedby="rate-note"></select>
         </label>
-        <button class="btn btn-primary" id="open-post" type="button">List<span class="post-label-extra">&nbsp;an item</span></button>
+        <button class="btn btn-primary" id="open-post" type="button">Log<span class="post-label-extra">&nbsp;an item</span></button>
       </div>
     </div>
   </header>
 
   <main>
     <section class="hero wrap">
-      <h1>Unclaimed property for sale</h1>
+      <h1>Unclaimed property</h1>
       <p class="hero-count" id="fact-count"></p>
     </section>
 
-    <section class="browse wrap" aria-label="Items for sale">
+    <section class="browse wrap" aria-label="Unclaimed items">
       <div class="controls">
         <div class="chips" id="chips" role="radiogroup" aria-label="Category"></div>
         <div class="controls-right">
@@ -179,7 +179,7 @@
 
       <div class="sheet-actions">
         <button class="btn btn-ghost" type="button" data-close>Cancel</button>
-        <button class="btn btn-primary" type="submit" id="post-submit">List for sale</button>
+        <button class="btn btn-primary" type="submit" id="post-submit">Log item</button>
       </div>
     </form>
   </dialog>
