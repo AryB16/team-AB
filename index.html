@@ -6,6 +6,9 @@
   <meta name="color-scheme" content="light">
   <title>AB Precinct · Evidence Locker</title>
   <meta name="description" content="Log items as evidence, search the case files, and request clearance to reach the reporting officer.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -13,8 +16,8 @@
     <div class="wrap bar-row">
       <a class="wordmark" href="./"><span class="wordmark-dept">AB Precinct</span> Evidence Locker</a>
       <div class="bar-actions">
-        <label class="currency-pill" title="Show valuations in">
-          <span class="visually-hidden">Show valuations in</span>
+        <label class="currency-pill" title="Show assessed values in">
+          <span class="pill-label">Value in</span>
           <select id="currency" aria-describedby="rate-note"></select>
         </label>
         <button class="btn btn-primary" id="open-post" type="button">Log<span class="post-label-extra">&nbsp;evidence</span></button>

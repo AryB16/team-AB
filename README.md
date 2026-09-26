@@ -19,4 +19,4 @@ Plain HTML, CSS and JavaScript. No build step, no dependencies. To run locally: 
 1. **Base build:** post, browse, filter and search listings
 2. **Currency:** live conversion with the Frankfurter API
 3. **No new libraries:** photos, saved listings, edit/delete, contact reveal, all in vanilla JS
-4. **Reskin:** now the AB Precinct Evidence Locker. Listings are case files in manila folders, each opening on a sealed evidence bag with a printed label and a chain-of-custody timeline (Logged → Clearance requested → Case closed). Statuses are rubber stamps, and seller contact stays redacted until you request clearance. Same features underneath, and the typewriter lettering uses system fonts, so the site loads no web fonts at all.
+4. **Reskin:** now the AB Precinct Evidence Locker. Listings are case files in manila folders, each opening on a sealed evidence bag with a printed label and a chain-of-custody timeline (Logged → Clearance requested → Case closed). Statuses are rubber stamps, and seller contact stays redacted until you request clearance. Same features underneath: currency conversion now reads as assessed values, and every category is a themed case type.

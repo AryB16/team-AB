@@ -23,9 +23,13 @@ const FLAG = `<svg class="flag" viewBox="0 0 24 24" aria-hidden="true"><path d="
 // The data keeps its original values; only the words on screen follow the case-file theme.
 const CASE_TYPES = {
   Books: "Documents",
+  Electronics: "Digital devices",
+  Appliances: "Equipment",
+  Furniture: "Furnishings",
   "Dorm essentials": "Personal effects",
   Clothing: "Apparel",
-  Other: "Miscellaneous",
+  Stationery: "Office supplies",
+  Other: "Unclassified",
 };
 const STATES = { New: "Pristine", "Like new": "Intact", Used: "Worn" };
 const caseType = (category) => CASE_TYPES[category] ?? category;
@@ -223,12 +227,12 @@ async function loadRates() {
     if (id !== rateRequest) return;
     state.rates = rates;
     const day = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short" }).format(new Date(date));
-    note.textContent = `Valuations in ${state.display} · ${day} rates`;
+    note.textContent = `Assessed values in ${state.display} · ${day} exchange rates`;
     note.classList.remove("is-error");
   } catch {
     if (id !== rateRequest) return;
     state.rates = null;
-    note.textContent = "Valuation service offline, showing declared values";
+    note.textContent = "Assessment service offline, showing declared values";
     note.classList.add("is-error");
   }
   grid.removeAttribute("aria-busy");

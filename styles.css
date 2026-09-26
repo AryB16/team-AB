@@ -1,37 +1,36 @@
 :root {
-  --bg: #d3c6a6;
-  --surface: #f6ecd2;
-  --ink: #1b1a17;
-  --ink-2: #33302a;
-  --muted: #564f41;
-  --line: #bba97f;
-  --line-strong: #8f7d55;
-  --accent: #1f2b45;
-  --accent-ink: #f4efe2;
-  --accent-soft: #dde2ec;
+  --bg: #e4e7ec;
+  --surface: #f9f4e6;
+  --ink: #161a22;
+  --ink-2: #363d4b;
+  --muted: #566070;
+  --line: #d6cfba;
+  --line-strong: #a69d83;
+  --accent: #1c2a48;
+  --accent-ink: #ffffff;
+  --accent-soft: #dfe5f0;
   --error: #a3261c;
-  --scrim: rgb(18 16 13 / 0.55);
-  --sheet: #fbf7ec;
-  --stamp: #b1261c;
+  --scrim: rgb(14 18 28 / 0.55);
+  --sheet: #ffffff;
+  --stamp: #b3261e;
   --reserved: #1f4e8c;
   --reserved-soft: transparent;
 
-  --tint-books: #f7efd9;
-  --tint-electronics: #f7efd9;
-  --tint-appliances: #f7efd9;
-  --tint-dorm: #f7efd9;
-  --tint-furniture: #f7efd9;
-  --tint-clothing: #f7efd9;
-  --tint-stationery: #f7efd9;
-  --tint-other: #f7efd9;
+  --tint-books: #fbf8ef;
+  --tint-electronics: #fbf8ef;
+  --tint-appliances: #fbf8ef;
+  --tint-dorm: #fbf8ef;
+  --tint-furniture: #fbf8ef;
+  --tint-clothing: #fbf8ef;
+  --tint-stationery: #fbf8ef;
+  --tint-other: #fbf8ef;
 
-  /* Typewriter lettering from fonts every device already has: nothing to download. */
-  --type: "American Typewriter", "Courier New", Courier, monospace;
+  --type: "Figtree", system-ui, -apple-system, sans-serif;
 
   --wrap: 72rem;
   --gutter: clamp(1rem, 4vw, 2rem);
-  --radius: 6px;
-  --r-sm: 4px;
+  --radius: 12px;
+  --r-sm: 10px;
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
@@ -206,7 +205,7 @@ button {
 }
 
 .currency-pill select {
-  width: 5.6rem;
+  width: 5.4rem;
   padding: 0 2rem 0 0.95rem;
   font-weight: 600;
 }
@@ -1174,20 +1173,63 @@ button {
 
 /* Case-file theme (round 4) */
 
+.bar {
+  background: var(--accent);
+  border-bottom: 0;
+  color: var(--accent-ink);
+}
+
 .wordmark {
-  font-family: var(--type);
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+}
+
+.bar .btn-primary {
+  background: var(--stamp);
+}
+
+.bar .btn-primary:hover {
+  background: color-mix(in srgb, var(--stamp) 85%, #000);
+}
+
+.bar .currency-pill select {
+  background: rgb(255 255 255 / 0.08);
+  border-color: rgb(255 255 255 / 0.3);
+  color: var(--accent-ink);
+}
+
+.bar .currency-pill select:hover {
+  border-color: rgb(255 255 255 / 0.7);
+}
+
+.bar :focus-visible {
+  outline-color: var(--accent-ink);
+}
+
+.currency-pill select option,
+.currency-pill select optgroup {
+  color: var(--ink);
+}
+
+.currency-pill {
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pill-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.75;
 }
 
 .wordmark-dept {
   display: block;
   margin-bottom: 0.15rem;
-  font-family: var(--type);
   font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  color: var(--stamp);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #f2a39b;
 }
 
 .hero h1,
@@ -1197,9 +1239,7 @@ button {
   letter-spacing: -0.01em;
 }
 
-.hero h1 {
-  text-transform: uppercase;
-}
+
 
 .hero-count,
 .rate-note,
@@ -1211,10 +1251,7 @@ button {
   font-family: var(--type);
 }
 
-.chip,
-.btn {
-  letter-spacing: 0.02em;
-}
+
 
 /* Each listing is a manila folder with a tab on top. */
 .grid {
@@ -1257,6 +1294,7 @@ button {
 }
 
 .card-case {
+  font-weight: 700;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1270,7 +1308,7 @@ button {
 .card-art {
   border: 1px solid var(--line);
   border-top: 3px solid var(--stamp);
-  border-radius: 3px;
+  border-radius: 8px;
 }
 
 .card-art svg,
@@ -1383,7 +1421,7 @@ button {
 /* The detail view opens on a sealed evidence bag with a printed label. */
 .evidence-bag {
   padding: 0 1.5rem 1.1rem;
-  background: #f3f1ea;
+  background: #f1f3f6;
   border-bottom: 1px dashed var(--line-strong);
 }
 
@@ -1603,6 +1641,10 @@ button {
 
   .bag-label div {
     grid-template-columns: 5.2rem 1fr;
+  }
+
+  .pill-label {
+    display: none;
   }
 
   #open-post {
