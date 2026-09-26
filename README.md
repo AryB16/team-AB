@@ -44,3 +44,20 @@ js/icons.js     line icons for each category
 
 - **Round 1:** posting, browsing, category filter and search, listing detail view with seller contact.
 - **Round 2:** prices converted into the viewer's chosen currency using the Frankfurter API, with sort by converted price.
+
+## Photo credits
+
+The sample listings use photos from Wikimedia Commons, loaded directly from Commons. Each listing's detail view links to its source. Photos uploaded by users are shrunk in the browser and stored locally.
+
+| Listing | Photo | Licence |
+|---|---|---|
+| Casio fx-991EX calculator | [Fx-991EX.jpg](https://commons.wikimedia.org/wiki/File:Fx-991EX.jpg) by Mortymore | CC BY-SA 4.0 |
+| Engineering Mathematics | [College Textbooks.jpg](https://commons.wikimedia.org/wiki/File:College_Textbooks.jpg) | CC BY-SA 4.0 |
+| Study desk lamp | [A desk lamp.jpg](https://commons.wikimedia.org/wiki/File:A_desk_lamp.jpg) | CC BY-SA 4.0 |
+| Arduino Uno starter kit | [Arduino Uno - R3.jpg](https://commons.wikimedia.org/wiki/File:Arduino_Uno_-_R3.jpg) by SparkFun Electronics | CC BY 2.0 |
+| Mini fridge | [Mini Fridge - Refrigerator Wire Shelves.jpg](https://commons.wikimedia.org/wiki/File:Mini_Fridge_-_Refrigerator_Wire_Shelves_(54127913190).jpg) | see file page |
+| Electric kettle | [Electric-kettle.jpg](https://commons.wikimedia.org/wiki/File:Electric-kettle.jpg) | CC BY-SA 4.0 |
+| Lab coat | [Lab coats.jpg](https://commons.wikimedia.org/wiki/File:Lab_coats.jpg) | CC BY 2.0 |
+| Office chair | [Sihoo M57 mesh office chair 01.jpg](https://commons.wikimedia.org/wiki/File:Sihoo_M57_mesh_office_chair_01.jpg) | CC BY-SA 4.0 |
+| Graph notebooks | [Graph paper notepad.jpg](https://commons.wikimedia.org/wiki/File:Graph_paper_notepad_(4562203394).jpg) | see file page |
+| Data Structures, Weiss | [Stack of Books.jpg](https://commons.wikimedia.org/wiki/File:Stack_of_Books.jpg) | CC BY-SA 4.0 |

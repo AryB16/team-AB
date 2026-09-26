@@ -22,6 +22,15 @@ export const STATUSES = {
 
 const HOUR = 60 * 60 * 1000;
 
+// Sample photos are hotlinked from Wikimedia Commons; each file page lists its
+// author and licence (credited in the listing view and the README).
+function commons(file) {
+  return {
+    src: `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file)}?width=640`,
+    credit: `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(file)}`,
+  };
+}
+
 // Sample listings are dated relative to the first visit so the board never looks stale.
 function seed() {
   const now = Date.now();
@@ -31,6 +40,7 @@ function seed() {
   return [
     {
       title: "Casio fx-991EX calculator",
+      photo: commons("Fx-991EX.jpg"),
       category: "Electronics",
       condition: "Like new",
       price: 45,
@@ -42,6 +52,7 @@ function seed() {
     },
     {
       title: "Engineering Mathematics, B.S. Grewal (44th ed.)",
+      photo: commons("College_Textbooks.jpg"),
       category: "Books",
       condition: "Used",
       price: 650,
@@ -53,6 +64,7 @@ function seed() {
     },
     {
       title: "Study desk lamp, warm white",
+      photo: commons("A_desk_lamp.jpg"),
       category: "Dorm essentials",
       condition: "Like new",
       price: 30,
@@ -65,6 +77,7 @@ function seed() {
     },
     {
       title: "Arduino Uno starter kit",
+      photo: commons("Arduino_Uno_-_R3.jpg"),
       category: "Electronics",
       condition: "Like new",
       price: 22,
@@ -76,6 +89,7 @@ function seed() {
     },
     {
       title: "Mini fridge, 50 L",
+      photo: commons("Mini_Fridge_-_Refrigerator_Wire_Shelves_(54127913190).jpg"),
       category: "Appliances",
       condition: "Used",
       price: 180,
@@ -87,6 +101,7 @@ function seed() {
     },
     {
       title: "Electric kettle, 1.7 L",
+      photo: commons("Electric-kettle.jpg"),
       category: "Appliances",
       icon: "kettle",
       condition: "Like new",
@@ -99,6 +114,7 @@ function seed() {
     },
     {
       title: "Lab coat, size M",
+      photo: commons("Lab_coats.jpg"),
       category: "Clothing",
       condition: "Used",
       price: 15,
@@ -111,6 +127,7 @@ function seed() {
     },
     {
       title: "Office chair with lumbar support",
+      photo: commons("Sihoo_M57_mesh_office_chair_01.jpg"),
       category: "Furniture",
       condition: "Used",
       price: 120,
@@ -122,6 +139,7 @@ function seed() {
     },
     {
       title: "Graph notebooks, pack of 5",
+      photo: commons("Graph_paper_notepad_(4562203394).jpg"),
       category: "Stationery",
       condition: "New",
       price: 12,
@@ -133,6 +151,7 @@ function seed() {
     },
     {
       title: "Data Structures and Algorithm Analysis, Weiss",
+      photo: commons("Stack_of_Books.jpg"),
       category: "Books",
       condition: "Used",
       price: 60,
@@ -151,6 +170,12 @@ function seed() {
 }
 
 let items = load();
+
+// Visitors from before sample photos existed keep their data but gain the photos.
+for (const sample of seed()) {
+  const saved = items.find((item) => item.id === sample.id);
+  if (saved && !saved.photo) saved.photo = sample.photo;
+}
 
 function load() {
   try {

@@ -86,17 +86,28 @@ function prices(item) {
   return { main: formatMoney(amount, state.display), original: formatMoney(item.price, item.currency) };
 }
 
+// Uploaded photos are data URLs; sample photos are { src, credit } objects.
+function photoSrc(item) {
+  return typeof item.photo === "string" ? item.photo : item.photo?.src;
+}
+
 function fillArt(el, item) {
-  if (item.photo) {
-    const img = document.createElement("img");
-    img.src = item.photo;
-    img.alt = "";
-    el.replaceChildren(img);
-    el.classList.add("has-photo");
-  } else {
+  const showIcon = () => {
     el.innerHTML = categoryIcon(item.icon ?? item.category);
     el.classList.remove("has-photo");
-  }
+  };
+  const src = photoSrc(item);
+  if (!src) return showIcon();
+
+  const img = document.createElement("img");
+  img.alt = "";
+  img.decoding = "async";
+  img.loading = el.classList.contains("card-art") ? "lazy" : "eager";
+  // A remote photo can fail to load; the category drawing is a fine stand-in.
+  img.addEventListener("error", showIcon, { once: true });
+  img.src = src;
+  el.replaceChildren(img);
+  el.classList.add("has-photo");
 }
 
 function statusBadge(status) {
@@ -222,6 +233,9 @@ function fillDetail(item) {
   fillArt(art, item);
 
   $("detail-badges").innerHTML = `<span class="badge">${item.category}</span><span class="badge">${item.condition}</span>${statusBadge(item.status)}`;
+  const credit = $("detail-credit");
+  credit.hidden = !item.photo?.credit;
+  if (item.photo?.credit) credit.href = item.photo.credit;
   $("detail-title").textContent = item.title;
   $("detail-price").textContent = main;
   $("detail-original").textContent = original ? `${original} listed` : "";
@@ -514,14 +528,15 @@ form.addEventListener("submit", (event) => {
   grid.firstElementChild?.scrollIntoView({ behavior: "smooth", block: "center" });
 });
 
-function showPhoto(dataUrl) {
-  state.photo = dataUrl;
+function showPhoto(photo) {
+  state.photo = photo;
+  const src = photo && photoSrc({ photo });
   const preview = $("photo-preview");
-  preview.hidden = !dataUrl;
-  if (dataUrl) preview.src = dataUrl;
+  preview.hidden = !src;
+  if (src) preview.src = src;
   else preview.removeAttribute("src");
-  $("photo-empty").hidden = Boolean(dataUrl);
-  $("photo-remove").hidden = !dataUrl;
+  $("photo-empty").hidden = Boolean(src);
+  $("photo-remove").hidden = !src;
 }
 
 fields.photo.addEventListener("change", async () => {

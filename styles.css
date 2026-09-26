@@ -1004,7 +1004,22 @@ button {
 
 .detail-art.has-photo {
   height: 15rem;
-  background: var(--ink);
+}
+
+.photo-credit {
+  display: block;
+  padding: 0.35rem 1.5rem 0;
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-align: right;
+}
+
+.photo-credit[hidden] {
+  display: none;
+}
+
+.detail-art.has-photo {
+  background: var(--tint, var(--tint-other));
 }
 
 .photo-drop {
