@@ -31,6 +31,8 @@ const stateOf = (condition) => CONDITIONS_SHOWN[condition] ?? condition;
 const DAY = 24 * 60 * 60 * 1000;
 // Items go to auction after 30 days unclaimed, so they were found 30 days before listing.
 const foundOn = (item) => new Date(new Date(item.posted) - 30 * DAY);
+// Each lot stays open for a week after it is listed.
+const closesOn = (item) => new Date(new Date(item.posted).getTime() + 7 * DAY);
 
 // A stable, official-looking file number derived from the listing id.
 function caseNumber(id) {
@@ -162,7 +164,8 @@ function card(item) {
   li.querySelector(".card-where").textContent = `Collect from ${item.location}`;
   li.querySelector(".avatar").textContent = initials(item.seller);
   li.querySelector(".card-seller").textContent = `Logged by Off. ${item.seller}`;
-  li.querySelector(".card-when").textContent = timeAgo(item.posted);
+  li.querySelector(".card-when").textContent =
+    item.status === "sold" ? `Listed ${timeAgo(item.posted)}` : `Listed ${timeAgo(item.posted)} · closes ${dateFmt.format(closesOn(item))}`;
   li.querySelector(".price").textContent = main;
   if (original) li.querySelector(".price-original").textContent = original;
   return li;
@@ -266,7 +269,7 @@ function fillDetail(item) {
   $("detail-badges").innerHTML = `<span class="badge">${caseType(item.category)}</span><span class="badge">${stateOf(item.condition)}</span>${statusBadge(item.status)}`;
   $("detail-title").textContent = item.title;
   $("detail-price").textContent = main;
-  $("detail-original").textContent = original ? `${original} reserve` : "";
+  $("detail-original").textContent = original ? `${original} as logged` : "";
   $("detail-description").textContent = item.description || "No notes from the property office.";
   $("detail-description").classList.toggle("is-empty", !item.description);
   $("detail-location").textContent = item.location;
@@ -356,7 +359,7 @@ function fillDetail(item) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "btn btn-primary btn-wide";
-    button.textContent = "Place a bid";
+    button.textContent = "Bid at reserve";
     button.addEventListener("click", () => {
       state.interested.add(item.id);
       fillDetail(item);
@@ -365,7 +368,7 @@ function fillDetail(item) {
     if (item.status === "reserved") {
       const hint = document.createElement("p");
       hint.className = "actions-hint";
-      hint.textContent = "A bid has already been received, but you can still place yours.";
+      hint.textContent = "A bid has already been received, but you can still bid at reserve.";
       actions.append(hint);
     }
     return;
@@ -380,7 +383,7 @@ function fillDetail(item) {
   link.textContent = label;
   const hint = document.createElement("p");
   hint.className = "actions-hint";
-  hint.textContent = `Bid placed. If it wins, collect it from ${item.location} and ask for Officer ${item.seller.split(" ").at(-1)}.`;
+  hint.textContent = `Bid at reserve placed. If it wins when bidding closes on ${dateFmt.format(closesOn(item))}, collect it from ${item.location} and ask for Officer ${item.seller.split(" ").at(-1)}.`;
   row.append(link, saveButton);
   actions.append(hint);
 }
@@ -390,7 +393,7 @@ function fillCustody(item, interested) {
   const sold = item.status === "sold";
   const steps = [
     { label: "Found & logged", note: `${fullDate.format(foundOn(item))} by Officer ${item.seller}`, done: true },
-    { label: "Unclaimed after 30 days", note: `Listed for auction ${timeAgo(item.posted)}`, done: true },
+    { label: "Unclaimed after 30 days", note: `Listed for auction ${timeAgo(item.posted)}, closes ${fullDate.format(closesOn(item))}`, done: true },
   ];
   if (item.status === "reserved") {
     steps.push({ label: "Bid received", note: "Another bidder has placed a bid", done: true });
