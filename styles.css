@@ -19,13 +19,11 @@
   --tint-stationery: #e2e5d2;
   --tint-other: #e5e1d9;
 
-  --serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
-  --sans: "Geist", system-ui, -apple-system, sans-serif;
-  --mono: "Geist Mono", ui-monospace, monospace;
+  --sans: "Figtree", system-ui, -apple-system, sans-serif;
 
   --wrap: 72rem;
   --gutter: clamp(1rem, 4vw, 2rem);
-  --radius: 10px;
+  --radius: 16px;
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
@@ -122,11 +120,11 @@ button {
 }
 
 .wordmark {
-  font-family: var(--serif);
-  font-size: 1.75rem;
+  font-size: 1.25rem;
+  font-weight: 700;
   line-height: 1;
   text-decoration: none;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 .bar-actions {
@@ -205,8 +203,8 @@ button {
 }
 
 .currency-pill select {
-  font-family: var(--mono);
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
+  font-weight: 500;
   max-width: 13rem;
   text-overflow: ellipsis;
 }
@@ -216,67 +214,34 @@ button {
   border-color: var(--ink-2);
 }
 
-/* Hero */
+/* Heading */
 
 .hero {
-  padding-top: clamp(3rem, 8vw, 5.5rem);
-  padding-bottom: clamp(2rem, 5vw, 3.25rem);
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding-top: clamp(1.75rem, 5vw, 2.75rem);
+  padding-bottom: 1rem;
 }
 
 .hero h1 {
   margin: 0;
-  max-width: 16ch;
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: clamp(2.9rem, 7.5vw, 5.4rem);
-  line-height: 0.98;
-  letter-spacing: -0.02em;
-  text-wrap: balance;
-}
-
-.lede {
-  max-width: 44ch;
-  margin: 1.25rem 0 0;
-  font-size: clamp(1.02rem, 1.6vw, 1.15rem);
-  color: var(--ink-2);
-  text-wrap: pretty;
-}
-
-.facts {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 2.5rem 0 0;
-  border-top: 1px solid var(--line);
-}
-
-.facts > div {
-  padding: 1rem 2.5rem 0 0;
-  margin-right: 2.5rem;
-  border-right: 1px solid var(--line);
-}
-
-.facts > div:last-child {
-  border-right: 0;
-  margin-right: 0;
-}
-
-.facts dt {
-  font-size: 0.8125rem;
-  color: var(--muted);
-}
-
-.facts dd {
-  margin: 0.1rem 0 0;
-  font-family: var(--serif);
-  font-size: 2.1rem;
+  font-size: clamp(1.6rem, 4vw, 2.1rem);
+  font-weight: 700;
   line-height: 1.1;
-  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+.hero-count {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--muted);
 }
 
 /* Browse controls */
 
 .browse {
-  padding-bottom: 4rem;
+  padding-bottom: 2.5rem;
 }
 
 .controls {
@@ -285,8 +250,7 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1.25rem 0;
-  border-top: 1px solid var(--ink);
+  padding: 0 0 0.75rem;
 }
 
 .chips {
@@ -369,8 +333,8 @@ button {
 }
 
 .rate-note {
-  min-height: 1.3rem;
-  margin: 0 0 1.5rem;
+  min-height: 1.2rem;
+  margin: 0 0 1rem;
   font-size: 0.8125rem;
   color: var(--muted);
 }
@@ -383,8 +347,8 @@ button {
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15.5rem), 1fr));
-  gap: 1.5rem 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 13.5rem), 1fr));
+  gap: 1rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -425,7 +389,7 @@ button {
 .card-art {
   display: grid;
   place-items: center;
-  aspect-ratio: 5 / 4;
+  aspect-ratio: 16 / 9;
   background: var(--tint-other);
   border-bottom: 1px solid var(--line);
 }
@@ -437,11 +401,11 @@ button {
 .card[data-category="Stationery"] .card-art { background: var(--tint-stationery); }
 
 .card-art svg {
-  width: 30%;
-  max-width: 5rem;
+  width: 22%;
+  max-width: 3.25rem;
   fill: none;
   stroke: var(--ink-2);
-  stroke-width: 1.15;
+  stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
   opacity: 0.85;
@@ -451,7 +415,7 @@ button {
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding: 0.95rem 1.05rem 1.1rem;
+  padding: 0.8rem 0.95rem 0.9rem;
 }
 
 .card-meta {
@@ -469,9 +433,9 @@ button {
 }
 
 .card-title {
-  margin: 0.35rem 0 0;
-  font-size: 1rem;
-  font-weight: 500;
+  margin: 0.2rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 600;
   line-height: 1.35;
   text-wrap: pretty;
 }
@@ -480,46 +444,36 @@ button {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.2rem 0.6rem;
+  gap: 0.1rem 0.5rem;
   margin: auto 0 0;
-  padding-top: 0.9rem;
+  padding-top: 0.6rem;
 }
 
 .price {
-  font-family: var(--serif);
-  font-size: 1.7rem;
-  line-height: 1;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.2;
   letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
 }
 
 .price-original {
-  font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
 
 .empty {
-  padding: 3.5rem 0;
-  border-top: 1px solid var(--line);
-  color: var(--ink-2);
-}
-
-.empty p {
   margin: 0;
-}
-
-.empty .empty-title {
-  margin-bottom: 0.35rem;
-  font-family: var(--serif);
-  font-size: 1.9rem;
-  color: var(--ink);
+  padding: 2.5rem 0;
+  text-align: center;
+  color: var(--muted);
 }
 
 /* Footer */
 
 .foot {
-  padding-top: 1.5rem;
+  padding-top: 0.5rem;
   padding-bottom: 2.5rem;
   font-size: 0.8125rem;
   color: var(--muted);
@@ -538,7 +492,7 @@ button {
   max-height: calc(100dvh - 2rem);
   padding: 0;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 20px;
   background: var(--surface);
   color: var(--ink);
 }
@@ -571,9 +525,9 @@ button {
 
 .sheet-head h2 {
   margin: 0;
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: 2rem;
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
   line-height: 1;
 }
 
@@ -624,7 +578,7 @@ button {
   padding: 0 0.85rem;
   background: var(--bg);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 0.95rem;
   font-weight: 400;
   color: var(--ink);
@@ -650,14 +604,14 @@ button {
 .price-input select {
   width: 6rem;
   flex-shrink: 0;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: 0.875rem;
 }
 
 .price-input input {
   flex: 1;
   min-width: 0;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-variant-numeric: tabular-nums;
 }
 
@@ -675,7 +629,7 @@ button {
   gap: 0.3rem;
   padding: 0.7rem 0.4rem 0.6rem;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 12px;
   background: var(--bg);
   font-size: 0.8125rem;
   font-weight: 400;
@@ -747,19 +701,11 @@ button {
     width: 100%;
   }
 
-  .facts > div {
-    padding-right: 1.25rem;
-    margin-right: 1.25rem;
-  }
-
-  .facts dd {
-    font-size: 1.7rem;
-  }
 }
 
 @media (max-width: 30rem) {
   .wordmark {
-    font-size: 1.5rem;
+    font-size: 1.15rem;
   }
 
   .bar-actions {
@@ -781,16 +727,11 @@ button {
   }
 
   .card-art {
-    aspect-ratio: 1;
+    aspect-ratio: 16 / 10;
   }
 
   .card-body {
     padding: 0.75rem 0.8rem 0.85rem;
-  }
-
-  .card-meta {
-    flex-direction: column;
-    gap: 0;
   }
 
   .card-title {
@@ -798,7 +739,7 @@ button {
   }
 
   .price {
-    font-size: 1.4rem;
+    font-size: 1.05rem;
   }
 
   #open-post {
@@ -808,6 +749,12 @@ button {
 
   .grid {
     gap: 0.75rem;
+  }
+}
+
+@media (max-width: 23rem) {
+  .post-label-extra {
+    display: none;
   }
 }
 

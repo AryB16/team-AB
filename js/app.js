@@ -78,7 +78,7 @@ function card(item) {
   if (converted) {
     price.textContent = formatMoney(amount, state.display);
     price.title = "Converted at today's reference rate";
-    li.querySelector(".price-original").textContent = `${formatMoney(item.price, item.currency)} listed`;
+    li.querySelector(".price-original").textContent = formatMoney(item.price, item.currency);
   } else {
     price.textContent = formatMoney(item.price, item.currency);
   }
@@ -107,10 +107,8 @@ function render() {
   grid.replaceChildren(...shown.map(card));
   $("empty").hidden = shown.length > 0;
 
-  const all = allListings();
-  $("fact-count").textContent = all.length;
-  $("fact-categories").textContent = new Set(all.map((item) => item.category)).size;
-  $("fact-currency").textContent = state.display;
+  const total = allListings().length;
+  $("fact-count").textContent = `${total} ${total === 1 ? "listing" : "listings"}`;
 
   for (const chip of chips.children) {
     chip.setAttribute("aria-checked", String(chip.dataset.value === state.category));
@@ -126,13 +124,13 @@ async function loadRates() {
     const { date, rates } = await ratesFor(state.display);
     if (id !== rateRequest) return;
     state.rates = rates;
-    const day = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long" }).format(new Date(date));
-    note.textContent = `Prices converted to ${state.display} at the ${day} reference rate. Sellers' original prices are shown underneath.`;
+    const day = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short" }).format(new Date(date));
+    note.textContent = `Prices in ${state.display} · ${day} rates`;
     note.classList.remove("is-error");
   } catch {
     if (id !== rateRequest) return;
     state.rates = null;
-    note.textContent = "The exchange-rate service isn't responding, so prices are shown in each seller's own currency.";
+    note.textContent = "Rates unavailable, showing original prices";
     note.classList.add("is-error");
   }
   grid.removeAttribute("aria-busy");

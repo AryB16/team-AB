@@ -7,7 +7,7 @@
   <meta name="description" content="Post things you want to sell, browse what's up, and see every price in your own currency.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -19,20 +19,15 @@
           <span class="visually-hidden">Show prices in</span>
           <select id="currency" aria-describedby="rate-note"></select>
         </label>
-        <button class="btn btn-primary" id="open-post" type="button">Post a listing</button>
+        <button class="btn btn-primary" id="open-post" type="button">Post<span class="post-label-extra">&nbsp;a listing</span></button>
       </div>
     </div>
   </header>
 
   <main>
     <section class="hero wrap">
-      <h1>Second‑hand, from people&nbsp;nearby.</h1>
-      <p class="lede">Post what you no longer need, browse what others have put up, and read every price in the currency you think in.</p>
-      <dl class="facts">
-        <div><dt>Listings</dt><dd id="fact-count">—</dd></div>
-        <div><dt>Categories</dt><dd id="fact-categories">—</dd></div>
-        <div><dt>Prices shown in</dt><dd id="fact-currency">—</dd></div>
-      </dl>
+      <h1>Buy and sell nearby</h1>
+      <p class="hero-count" id="fact-count"></p>
     </section>
 
     <section class="browse wrap" aria-label="Listings">
@@ -57,15 +52,12 @@
       <p id="rate-note" class="rate-note" aria-live="polite"></p>
 
       <ul id="listings" class="grid"></ul>
-      <div id="empty" class="empty" hidden>
-        <p class="empty-title">Nothing matches that.</p>
-        <p>Try a different category, clear the search, or be the first to post one.</p>
-      </div>
+      <p id="empty" class="empty" hidden>Nothing matches that. Try another category or search.</p>
     </section>
   </main>
 
   <footer class="foot wrap">
-    <p>Exchange rates from <a href="https://frankfurter.dev" rel="noopener">Frankfurter</a>. Listings are stored in your browser.</p>
+    <p>Rates by <a href="https://frankfurter.dev" rel="noopener">Frankfurter</a></p>
   </footer>
 
   <dialog id="post-dialog" class="sheet" aria-labelledby="post-title">
