@@ -1,28 +1,29 @@
 :root {
-  --bg: #f2eee6;
-  --surface: #fbf9f4;
+  --bg: #e7e1d5;
+  --surface: #f3efe7;
   --ink: #171511;
-  --ink-2: #4a463e;
-  --muted: #7d776c;
-  --line: #e2dbce;
-  --line-strong: #cbc1ae;
+  --ink-2: #3d3931;
+  --muted: #6a6459;
+  --line: #d4cab8;
+  --line-strong: #b8ac95;
   --accent: #1f3b30;
   --accent-ink: #f4f0e8;
-  --accent-soft: #e3e9e3;
+  --accent-soft: #d5dfd6;
   --error: #9b3a20;
   --scrim: rgb(18 16 13 / 0.5);
-  --sheet: #ffffff;
+  --sheet: #fbf9f5;
+  --sold: #dbd3c5;
   --reserved: #8a5a12;
   --reserved-soft: #f6e9cf;
 
-  --tint-books: #ebe0cc;
-  --tint-electronics: #dde3e3;
-  --tint-appliances: #dfe4ea;
-  --tint-dorm: #efe4c9;
-  --tint-furniture: #e7dccf;
-  --tint-clothing: #ecdcd6;
-  --tint-stationery: #e2e5d2;
-  --tint-other: #e5e1d9;
+  --tint-books: #e1d2b6;
+  --tint-electronics: #cdd6d7;
+  --tint-appliances: #d0d8e1;
+  --tint-dorm: #e5d5ae;
+  --tint-furniture: #dbcbb8;
+  --tint-clothing: #e2cbc2;
+  --tint-stationery: #d4d9bd;
+  --tint-other: #d9d2c5;
 
   --sans: "Figtree", system-ui, -apple-system, sans-serif;
 
@@ -379,10 +380,20 @@ button {
   background: var(--sheet);
 }
 
-.card.is-sold .card-art,
+.card.is-sold {
+  background: var(--sold);
+  border-color: var(--line-strong);
+}
+
 .card.is-sold .card-title-text,
-.card.is-sold .card-price {
-  opacity: 0.5;
+.card.is-sold .price {
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+  color: var(--ink-2);
+}
+
+.card.is-sold .card-art {
+  opacity: 0.7;
 }
 
 .card.is-new {
