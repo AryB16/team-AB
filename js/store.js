@@ -162,11 +162,14 @@ function load() {
   return fresh;
 }
 
+// Returns false when the browser refuses to store it, usually because photos
+// have filled the localStorage quota.
 function persist(list = items) {
   try {
     localStorage.setItem(KEY, JSON.stringify(list));
+    return true;
   } catch {
-    // Private mode or full storage: changes still show for this visit.
+    return false;
   }
 }
 
@@ -187,13 +190,25 @@ export function addListing(fields) {
     ...fields,
   };
   items.push(item);
-  persist();
+  if (!persist()) {
+    items.pop();
+    return null;
+  }
   return item;
 }
 
 export function updateListing(id, changes) {
   const item = getListing(id);
-  if (!item) return;
+  if (!item) return false;
+  const before = { ...item };
   Object.assign(item, changes);
+  if (persist()) return true;
+  Object.keys(item).forEach((key) => delete item[key]);
+  Object.assign(item, before);
+  return false;
+}
+
+export function removeListing(id) {
+  items = items.filter((item) => item.id !== id);
   persist();
 }
