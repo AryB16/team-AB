@@ -45,3 +45,4 @@ js/photo.js     shrinks uploaded photos before they are saved
 
 - **Round 1:** posting, browsing, category filter and search, listing detail view with seller contact.
 - **Round 2:** prices converted into the viewer's chosen currency using the Frankfurter API, with sort by converted price.
+- **Round 3 (no new libraries or frameworks):** photo uploads shrunk in the browser with a canvas, saved listings, editing and deleting your own listings, contact details hidden until you say you're interested, and sold listings faded to the bottom. Everything added this round is plain HTML, CSS and JavaScript.
