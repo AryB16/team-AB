@@ -1,67 +1,46 @@
-# AB Marketplace — team AB
+# AB Marketplace
 
-A listings app for buying and selling nearby: post an item, browse and filter what's up, open a listing to see the details, and contact the seller.
+A small marketplace for buying and selling things nearby. Post an item, browse what others have listed, open a listing for the details, and get in touch with the seller.
 
-Plain HTML, CSS and JavaScript with no build step. Listings are saved in the browser's localStorage. To run it locally, serve the folder with any static server (for example `python3 -m http.server`) and open the page.
+## Features
 
-## What we built each round
+- **Post a listing** with a title, description, price, condition, category, pickup point and a WhatsApp number or email.
+- **Browse** everything that's up, newest first, with relative times ("3 hours ago") and the seller's name.
+- **Filter and search** by category chips and free text (titles, descriptions and pickup points), and sort by price.
+- **Listing details:** tap any listing to see the full description and pickup point. "I'm interested" reveals the seller's contact and opens WhatsApp or email with a message ready to send.
+- **Listing status:** sellers can mark their own listings as available, reserved or sold. Sold items stay visible but are struck through.
+- **Any currency:** pick a currency at the top and every price is converted at the latest reference rate. The seller's original price is shown next to it.
 
-- **Round 1: base build.** Post a listing (title, price, category, condition, description, pickup point, contact), browse all listings, filter by category and search. Clicking a listing opens a detail view with an "I'm interested" button that reveals the seller's contact.
+## Currency conversion
 
----
+Rates come from the [Frankfurter](https://frankfurter.dev) API (no key needed). The app uses Frankfurter's v2 endpoint, which blends several central banks and so covers currencies like AED that the ECB-only v1 API doesn't. If v2 fails it falls back to v1, and if both are down the page says so and shows each seller's original price.
 
-# Code & Chaos — Base Repo
+Rates are requested once per display currency, with that currency as the base, so a single request converts every listing. Responses are cached for an hour.
 
-This is the starter repo for **Code & Chaos**, an hourly-twist coding challenge. Fork this repo and build on it throughout the event.
+## Running it
 
-## Getting Started
-
-1. **Fork this repo.**
-2. **Rename your fork** to `team-<your-team-name>` (e.g. `team-nightowls`).
-3. Work directly in your fork for the full duration of the event.
-
-## Checkpoint Commits
-
-At the end of every hour, push a commit using this exact message format:
+There's no build step. Serve the folder with any static server and open it in a browser:
 
 ```
-ROUND-<number>-CHECKPOINT
+python3 -m http.server
 ```
 
-Examples: `ROUND-1-CHECKPOINT`, `ROUND-2-CHECKPOINT`, `ROUND-3-CHECKPOINT`, `ROUND-4-CHECKPOINT`
+Then visit http://localhost:8000.
 
-- This must be your **most recent commit** before each round's cutoff time.
-- You can make other commits during the hour too — only the checkpoint tag matters for tracking.
+Listings are stored in the browser's localStorage, so each visitor starts with the same sample listings and sees their own posts alongside them.
 
-## Rules
+## Project layout
 
-- Do not make your fork private.
-- Do not look at or copy from other teams' forks.
-- Full event timeline and round-by-round constraints will be shared separately (via registration confirmation / event channel) — this repo is just your working base.
+```
+index.html      page structure, post form and listing dialog
+styles.css      all styling
+js/app.js       rendering, filters, dialogs and the post form
+js/store.js     listings, categories and localStorage persistence
+js/money.js     Frankfurter client and price formatting
+js/icons.js     line icons for each category
+```
 
-Good luck, and have fun with the chaos!!!!
+## Progress by round
 
-## 🚀 Code & Chaos — Base Build (10:00 AM – 11:10 AM)
-
-Build a **listings app** — a place where users can post and browse listings.
-
-**Core functionality to include:**
-- Post a listing with a title, price, and category
-- View/browse all listings
-- A basic filter or search by category
-
-This is your foundation for the rest of the event — later rounds will build on top of what you create here, so keep your code reasonably organized.
-
-**Checkpoint due by 11:10 AM:** commit with message `ROUND-1-CHECKPOINT`
-
-‼️‼️‼️‼️
-##  Round 2 Twist (11:10 AM – 12:10 PM)
-
-Integrate the **Frankfurter currency conversion API** into your app in a meaningful way — it should connect to your app's core functionality, not just sit in a corner. For example: let users view a listing's price converted into a different currency of their choice.
-
-- API docs: https://frankfurter.dev
-- No API key required
-- Example request: `https://api.frankfurter.app/latest?amount=100&from=USD&to=EUR`
-
-**Checkpoint due by 12:20 PM:** commit with message `ROUND-2-CHECKPOINT`
-
+- **Round 1:** posting, browsing, category filter and search, listing detail view with seller contact.
+- **Round 2:** prices converted into the viewer's chosen currency using the Frankfurter API, with sort by converted price.
