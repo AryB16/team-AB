@@ -200,6 +200,7 @@ button {
 }
 
 .currency-pill select {
+  width: 5.6rem;
   padding: 0 2rem 0 0.95rem;
   font-size: 0.875rem;
   font-weight: 600;

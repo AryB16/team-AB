@@ -302,10 +302,37 @@ function fillSelect(select, options, selected) {
   );
 }
 
+// A closed <select> shows its selected option's text, so options carry the full
+// name while the list is open and the selected one shrinks back to its code after.
+function compact(select) {
+  for (const opt of select.options) opt.textContent = opt.selected ? opt.value : opt.dataset.full;
+}
+
+function expand(select) {
+  for (const opt of select.options) opt.textContent = opt.dataset.full;
+}
+
 function fillCurrencySelects(codes) {
-  const options = codes.map(({ code, name }) => ({ value: code, label: code, title: name }));
-  fillSelect(picker, options, state.display);
-  fillSelect(fields.currency, options, fields.currency.value || state.display);
+  for (const [select, selected] of [
+    [picker, state.display],
+    [fields.currency, fields.currency.value || state.display],
+  ]) {
+    fillSelect(select, codes.map(({ code }) => ({ value: code, label: code })), selected);
+    codes.forEach(({ code, name }, i) => {
+      select.options[i].dataset.full = name ? `${code} — ${name}` : code;
+    });
+    compact(select);
+  }
+}
+
+for (const select of [picker, fields.currency]) {
+  select.addEventListener("mousedown", () => expand(select));
+  select.addEventListener("touchstart", () => expand(select), { passive: true });
+  select.addEventListener("keydown", (event) => {
+    if ([" ", "Enter", "ArrowDown", "ArrowUp"].includes(event.key)) expand(select);
+  });
+  select.addEventListener("change", () => compact(select));
+  select.addEventListener("blur", () => compact(select));
 }
 
 function buildChips() {
@@ -407,6 +434,7 @@ form.addEventListener("input", () => {
 $("open-post").addEventListener("click", () => {
   formError.textContent = "";
   fields.currency.value = state.display;
+  compact(fields.currency);
   postDialog.showModal();
   fields.title.focus();
 });
