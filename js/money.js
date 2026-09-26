@@ -24,7 +24,7 @@ async function fetchRates(base) {
     const rates = { [base]: 1 };
     for (const row of rows) rates[row.quote] = row.rate;
     return { date: rows[0]?.date, rates };
-  } catch (err) {
+  } catch {
     const body = await getJSON(`${V1}/latest?from=${base}`);
     return { date: body.date, rates: { ...body.rates, [base]: 1 } };
   }
@@ -39,13 +39,6 @@ export function ratesFor(base) {
   // A failed request shouldn't be cached for the full hour.
   promise.catch(() => rateRequests.delete(base));
   return promise;
-}
-
-export async function convert(amount, from, to) {
-  if (from === to) return amount;
-  const { rates } = await ratesFor(from);
-  if (rates[to] == null) throw new Error(`No ${from} → ${to} rate`);
-  return amount * rates[to];
 }
 
 export function currencies() {
@@ -72,11 +65,16 @@ export function formatMoney(amount, code) {
   const key = `${code}:${whole}`;
   let fmt = formatters.get(key);
   if (!fmt) {
-    fmt = new Intl.NumberFormat("en", {
-      style: "currency",
-      currency: code,
-      ...(whole && { minimumFractionDigits: 0, maximumFractionDigits: 0 }),
-    });
+    try {
+      fmt = new Intl.NumberFormat("en", {
+        style: "currency",
+        currency: code,
+        ...(whole && { minimumFractionDigits: 0, maximumFractionDigits: 0 }),
+      });
+    } catch {
+      // An unknown code would throw and take the whole list down with it.
+      fmt = { format: (n) => `${n.toFixed(whole ? 0 : 2)} ${code}` };
+    }
     formatters.set(key, fmt);
   }
   return fmt.format(amount);

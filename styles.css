@@ -15,6 +15,7 @@
   --sold: #dbd3c5;
   --reserved: #8a5a12;
   --reserved-soft: #f6e9cf;
+  --heart: #b23a3a;
 
   --tint-books: #e1d2b6;
   --tint-electronics: #cdd6d7;
@@ -202,7 +203,6 @@ button {
 .currency-pill select {
   width: 5.6rem;
   padding: 0 2rem 0 0.95rem;
-  font-size: 0.875rem;
   font-weight: 600;
 }
 
@@ -421,6 +421,7 @@ button {
 .detail-art {
   display: grid;
   place-items: center;
+  overflow: hidden;
   background: var(--tint, var(--tint-other));
 }
 
@@ -815,10 +816,6 @@ button {
   outline-offset: 1px;
 }
 
-.detail-actions .segmented {
-  background: var(--bg);
-}
-
 .icon-btn svg {
   width: 1rem;
   height: 1rem;
@@ -912,14 +909,12 @@ button {
 .price-input select {
   width: 6rem;
   flex-shrink: 0;
-  font-family: var(--sans);
   font-size: 0.875rem;
 }
 
 .price-input input {
   flex: 1;
   min-width: 0;
-  font-family: var(--sans);
   font-variant-numeric: tabular-nums;
 }
 
@@ -991,11 +986,6 @@ button {
 
 /* Photos */
 
-.card-art,
-.detail-art {
-  overflow: hidden;
-}
-
 .has-photo img {
   width: 100%;
   height: 100%;
@@ -1027,10 +1017,6 @@ button {
 
 .photo-credit[hidden] {
   display: none;
-}
-
-.detail-art.has-photo {
-  background: var(--tint, var(--tint-other));
 }
 
 .photo-drop {
@@ -1100,8 +1086,8 @@ button {
   flex-shrink: 0;
   width: 0.95rem;
   height: 0.95rem;
-  fill: #b23a3a;
-  stroke: #b23a3a;
+  fill: var(--heart);
+  stroke: var(--heart);
   stroke-width: 1.5;
   stroke-linejoin: round;
 }
@@ -1130,8 +1116,8 @@ button {
 }
 
 .btn-save[aria-pressed="true"] .heart {
-  fill: #b23a3a;
-  stroke: #b23a3a;
+  fill: var(--heart);
+  stroke: var(--heart);
 }
 
 .chip[data-value="__saved"] {

@@ -146,9 +146,9 @@ function card(item) {
   return li;
 }
 
-function visibleListings() {
+function visibleListings(all) {
   const query = state.query.trim().toLowerCase();
-  const shown = allListings().filter(
+  const shown = all.filter(
     (item) =>
       (!state.category ||
         (state.category === SAVED ? item.saved : item.category === state.category)) &&
@@ -165,7 +165,8 @@ function visibleListings() {
 }
 
 function render() {
-  const shown = visibleListings();
+  const all = allListings();
+  const shown = visibleListings(all);
   grid.replaceChildren(...shown.map(card));
 
   $("empty").hidden = shown.length > 0;
@@ -179,7 +180,7 @@ function render() {
         : `Nothing${where} yet. Be the first to post one.`;
   }
 
-  const available = allListings().filter((item) => item.status !== "sold").length;
+  const available = all.filter((item) => item.status !== "sold").length;
   $("fact-count").textContent = `${available} available`;
 
   for (const chip of chips.children) {
@@ -396,12 +397,25 @@ function fillCurrencySelects(codes) {
     [picker, state.display],
     [fields.currency, fields.currency.value || state.display],
   ]) {
-    fillSelect(select, codes.map(({ code }) => ({ value: code, label: code })), selected);
-    codes.forEach(({ code, name }, i) => {
+    // Keep the current choice even if the list (e.g. the offline fallback) lacks it.
+    const list = codes.some((c) => c.code === selected) ? codes : [...codes, { code: selected }];
+    fillSelect(select, list.map(({ code }) => ({ value: code, label: code })), selected);
+    list.forEach(({ code, name }, i) => {
       select.options[i].dataset.full = name ? `${code} — ${name}` : code;
     });
     compact(select);
   }
+}
+
+// Setting a <select> to a code it doesn't list would leave it blank.
+function selectCurrency(select, code) {
+  if (![...select.options].some((opt) => opt.value === code)) {
+    const opt = new Option(code, code);
+    opt.dataset.full = code;
+    select.add(opt);
+  }
+  select.value = code;
+  compact(select);
 }
 
 for (const select of [picker, fields.currency]) {
@@ -525,6 +539,8 @@ form.addEventListener("submit", (event) => {
   search.value = "";
   sort.value = "new";
   render();
+  // Highlight it once; later re-renders (typing in search) shouldn't replay it.
+  state.justPosted = null;
   grid.firstElementChild?.scrollIntoView({ behavior: "smooth", block: "center" });
 });
 
@@ -563,7 +579,7 @@ function openPostForm(item) {
     fields.title.value = item.title;
     fields.description.value = item.description ?? "";
     fields.price.value = item.price;
-    fields.currency.value = item.currency;
+    selectCurrency(fields.currency, item.currency);
     fields.condition.value = item.condition;
     fields.category.value = item.category;
     fields.location.value = item.location;
@@ -571,10 +587,9 @@ function openPostForm(item) {
     fields.contactMethod.value = item.contact.method;
     fields.contactValue.value = item.contact.value;
   } else {
-    fields.currency.value = state.display;
+    selectCurrency(fields.currency, state.display);
   }
   fields.contactMethod.dispatchEvent(new Event("change"));
-  compact(fields.currency);
   showPhoto(item?.photo ?? null);
   postDialog.showModal();
   fields.title.focus();
