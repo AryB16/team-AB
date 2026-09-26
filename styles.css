@@ -26,6 +26,8 @@
   --tint-other: #fbf8ef;
 
   --type: "Figtree", system-ui, -apple-system, sans-serif;
+  /* Typed lettering for lot numbers, stamps and labels, from fonts every device has. */
+  --typed: "American Typewriter", "Courier New", Courier, monospace;
 
   --wrap: 72rem;
   --gutter: clamp(1rem, 4vw, 2rem);
@@ -1580,6 +1582,38 @@ button {
 
 .step-note {
   font-size: 0.8rem;
+  color: var(--ink-2);
+}
+
+.card::before,
+.badge-reserved,
+.badge-sold,
+.bag-seal,
+.bag-label dd,
+.case-no {
+  font-family: var(--typed);
+  font-weight: 700;
+}
+
+.price-kicker {
+  margin: 0.6rem 0 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.price-kicker + .detail-price {
+  margin-top: 0.1rem;
+}
+
+.card-price::before {
+  content: "Reserve";
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--ink-2);
 }
 

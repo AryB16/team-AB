@@ -26,7 +26,11 @@ const CASE_TYPES = {
   "Dorm essentials": "Personal items",
 };
 const caseType = (category) => CASE_TYPES[category] ?? category;
-const stateOf = (condition) => condition;
+const CONDITIONS_SHOWN = { New: "Excellent", "Like new": "Good", Used: "Fair" };
+const stateOf = (condition) => CONDITIONS_SHOWN[condition] ?? condition;
+const DAY = 24 * 60 * 60 * 1000;
+// Items go to auction after 30 days unclaimed, so they were found 30 days before listing.
+const foundOn = (item) => new Date(new Date(item.posted) - 30 * DAY);
 
 // A stable, official-looking file number derived from the listing id.
 function caseNumber(id) {
@@ -153,7 +157,7 @@ function card(item) {
 
   fillArt(li.querySelector(".card-art"), item);
   li.querySelector(".card-title-text").textContent = item.title;
-  li.querySelector(".card-case").textContent = `Found property · ${caseType(item.category)}`;
+  li.querySelector(".card-case").textContent = `Unclaimed property · ${caseType(item.category)}`;
   li.querySelector(".card-condition").textContent = stateOf(item.condition);
   li.querySelector(".card-where").textContent = `Collect from ${item.location}`;
   li.querySelector(".avatar").textContent = initials(item.seller);
@@ -193,17 +197,17 @@ function render() {
     const saved = state.category === SAVED;
     const where = saved ? " in your watchlist" : state.category ? ` in ${caseType(state.category)}` : "";
     $("empty-text").textContent = state.query.trim()
-      ? `No items match “${state.query.trim()}”${where}.`
+      ? `No lots match “${state.query.trim()}”${where}.`
       : saved
         ? "Your watchlist is empty. Open an item and tap Watch to keep it here."
-        : `No unclaimed property${where} right now.`;
+        : `No unclaimed property${where} up for auction right now.`;
   }
 
   const available = all.filter((item) => item.status !== "sold").length;
   const filtered = state.category || state.query.trim();
   $("fact-count").textContent = filtered
-    ? `${shown.length} of ${all.length} items shown`
-    : `${available} unclaimed ${available === 1 ? "item" : "items"}`;
+    ? `${shown.length} of ${all.length} lots shown`
+    : `${available} ${available === 1 ? "lot" : "lots"} open for bids`;
 
   for (const chip of chips.children) {
     chip.setAttribute("aria-checked", String(chip.dataset.value === state.category));
@@ -220,12 +224,12 @@ async function loadRates() {
     if (id !== rateRequest) return;
     state.rates = rates;
     const day = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short" }).format(new Date(date));
-    note.textContent = `Prices in ${state.display} · ${day} exchange rates`;
+    note.textContent = `Reserve prices in ${state.display} · ${day} exchange rates`;
     note.classList.remove("is-error");
   } catch {
     if (id !== rateRequest) return;
     state.rates = null;
-    note.textContent = "Exchange rates unavailable, showing original prices";
+    note.textContent = "Exchange rates unavailable, showing original reserve prices";
     note.classList.add("is-error");
   }
   grid.removeAttribute("aria-busy");
@@ -237,13 +241,13 @@ async function loadRates() {
 
 function contactLink(item) {
   const first = item.seller.split(" ")[0];
-  const message = `Hi ${first}, I'd like to claim the "${item.title}" (ref ${caseNumber(item.id)}) from lost property. Is it still available?`;
+  const message = `Hi ${first}, I'd like to bid on the "${item.title}" (lot ${caseNumber(item.id)}) in the property auction. Is it still open?`;
   if (item.contact.method === "whatsapp") {
     const digits = item.contact.value.replace(/\D/g, "");
-    return { href: `https://wa.me/${digits}?text=${encodeURIComponent(message)}`, label: "Message the officer on WhatsApp" };
+    return { href: `https://wa.me/${digits}?text=${encodeURIComponent(message)}`, label: "Message the auction officer on WhatsApp" };
   }
-  const subject = encodeURIComponent(`Lost property ref ${caseNumber(item.id)}: ${item.title}`);
-  return { href: `mailto:${item.contact.value}?subject=${subject}&body=${encodeURIComponent(message)}`, label: "Email the officer" };
+  const subject = encodeURIComponent(`Auction lot ${caseNumber(item.id)}: ${item.title}`);
+  return { href: `mailto:${item.contact.value}?subject=${subject}&body=${encodeURIComponent(message)}`, label: "Email the auction officer" };
 }
 
 function fillDetail(item) {
@@ -254,15 +258,15 @@ function fillDetail(item) {
   $("detail-art").dataset.category = item.category;
   fillArt($("detail-window"), item);
   $("bag-case").textContent = caseNumber(item.id);
-  $("bag-date").textContent = fullDate.format(new Date(item.posted));
+  $("bag-date").textContent = fullDate.format(foundOn(item));
   $("bag-officer").textContent = `Off. ${item.seller}`;
   fillCustody(item, interested);
 
-  $("detail-case").textContent = `Found property · Ref ${caseNumber(item.id)}`;
+  $("detail-case").textContent = `Unclaimed property · Lot ${caseNumber(item.id)}`;
   $("detail-badges").innerHTML = `<span class="badge">${caseType(item.category)}</span><span class="badge">${stateOf(item.condition)}</span>${statusBadge(item.status)}`;
   $("detail-title").textContent = item.title;
   $("detail-price").textContent = main;
-  $("detail-original").textContent = original ? `${original} listed` : "";
+  $("detail-original").textContent = original ? `${original} reserve` : "";
   $("detail-description").textContent = item.description || "No notes from the property office.";
   $("detail-description").classList.toggle("is-empty", !item.description);
   $("detail-location").textContent = item.location;
@@ -271,10 +275,10 @@ function fillDetail(item) {
   const via = item.contact.method === "whatsapp" ? "WhatsApp" : "email";
   const contact = $("detail-contact");
   if (item.mine) contact.textContent = item.contact.value;
-  else if (interested) contact.textContent = `Contact released: reachable on ${via}`;
+  else if (interested) contact.textContent = `Bid registered: the officer is reachable on ${via}`;
   else {
-    // Blacked out like a redacted form until the visitor asks to buy.
-    contact.innerHTML = `<span class="redacted" aria-hidden="true">████████████████</span><span class="visually-hidden">Officer contact details hidden until you make a claim</span>`;
+    // Blacked out like a redacted form until the visitor places a bid.
+    contact.innerHTML = `<span class="redacted" aria-hidden="true">████████████████</span><span class="visually-hidden">Auction officer contact details hidden until you place a bid</span>`;
   }
 
   const actions = $("detail-actions");
@@ -283,7 +287,7 @@ function fillDetail(item) {
   if (item.mine) {
     const label = document.createElement("p");
     label.className = "actions-label";
-    label.textContent = "Update claim status";
+    label.textContent = "Update auction status";
     const group = document.createElement("div");
     group.className = "segmented";
     for (const [value, text] of Object.entries(STATUSES)) {
@@ -343,7 +347,7 @@ function fillDetail(item) {
   actions.append(row);
 
   if (item.status === "sold") {
-    row.innerHTML = `<button class="btn btn-primary btn-wide" type="button" disabled>Claimed</button>`;
+    row.innerHTML = `<button class="btn btn-primary btn-wide" type="button" disabled>Sold at auction</button>`;
     row.append(saveButton);
     return;
   }
@@ -352,7 +356,7 @@ function fillDetail(item) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "btn btn-primary btn-wide";
-    button.textContent = "Claim this item";
+    button.textContent = "Place a bid";
     button.addEventListener("click", () => {
       state.interested.add(item.id);
       fillDetail(item);
@@ -361,7 +365,7 @@ function fillDetail(item) {
     if (item.status === "reserved") {
       const hint = document.createElement("p");
       hint.className = "actions-hint";
-      hint.textContent = "Someone has a claim pending, but you can still ask to be next in line.";
+      hint.textContent = "A bid has already been received, but you can still place yours.";
       actions.append(hint);
     }
     return;
@@ -376,24 +380,27 @@ function fillDetail(item) {
   link.textContent = label;
   const hint = document.createElement("p");
   hint.className = "actions-hint";
-  hint.textContent = `Claim sent. Collect it from ${item.location} and ask for Officer ${item.seller.split(" ").at(-1)}.`;
+  hint.textContent = `Bid placed. If it wins, collect it from ${item.location} and ask for Officer ${item.seller.split(" ").at(-1)}.`;
   row.append(link, saveButton);
   actions.append(hint);
 }
 
-// The listing's status history, told as the item's trail through the property room.
+// The listing's status history, told as the lot's trail from found item to auction sale.
 function fillCustody(item, interested) {
   const sold = item.status === "sold";
-  const steps = [{ label: "Found & logged", note: `${timeAgo(item.posted)} by Officer ${item.seller}`, done: true }];
+  const steps = [
+    { label: "Found & logged", note: `${fullDate.format(foundOn(item))} by Officer ${item.seller}`, done: true },
+    { label: "Unclaimed after 30 days", note: `Listed for auction ${timeAgo(item.posted)}`, done: true },
+  ];
   if (item.status === "reserved") {
-    steps.push({ label: "Claim pending", note: "Someone else has put in a claim", done: true });
+    steps.push({ label: "Bid received", note: "Another bidder has placed a bid", done: true });
   }
   steps.push({
-    label: "Claim requested",
-    note: sold ? "A claimant came forward" : interested ? "By you, during this visit" : item.mine ? "Waiting for a claimant" : "No claims yet",
+    label: "Bid placed",
+    note: sold ? "Winning bid accepted" : interested ? "By you, during this visit" : item.mine ? "Waiting for bids" : "No bid from you yet",
     done: sold || interested,
   });
-  steps.push({ label: "Claimed", note: sold ? "Collected from the property room" : "Still in the property room", done: sold });
+  steps.push({ label: "Sold", note: sold ? "Collected by the winning bidder" : "Auction still open", done: sold });
 
   $("detail-custody").replaceChildren(
     ...steps.map(({ label, note, done }) => {
@@ -488,7 +495,7 @@ for (const select of [picker, fields.currency]) {
 
 function buildChips() {
   const options = [
-    { value: "", label: "All items" },
+    { value: "", label: "All lots" },
     ...CATEGORIES.map((c) => ({ value: c, label: caseType(c) })),
     { value: SAVED, label: "Watchlist" },
   ];
@@ -528,7 +535,7 @@ function buildFormOptions() {
 }
 
 function contactProblem(method, value) {
-  if (!value) return "Add a way for claimants to reach you.";
+  if (!value) return "Add a way for bidders to reach you.";
   if (method === "whatsapp" && value.replace(/\D/g, "").length < 8) return "Enter a WhatsApp number with country code.";
   if (method === "email" && !/^\S+@\S+\.\S+$/.test(value)) return "Enter a valid email address.";
   return "";
@@ -550,9 +557,9 @@ form.addEventListener("submit", (event) => {
 
   let problem = "";
   if (!title) problem = "Name the item.";
-  else if (fields.price.value === "" || !Number.isFinite(price) || price < 0) problem = "Enter a price of 0 or more.";
+  else if (fields.price.value === "" || !Number.isFinite(price) || price < 0) problem = "Enter a reserve price of 0 or more.";
   else if (!fields.condition.value) problem = "Pick the item's condition.";
-  else if (!fields.category.value) problem = "Pick a category.";
+  else if (!fields.category.value) problem = "Pick a property type.";
   else if (!location) problem = "Say where it can be collected.";
   else if (!seller) problem = "Add the logging officer's name.";
   else problem = contactProblem(fields.contactMethod.value, contactValue);
@@ -630,7 +637,7 @@ function openPostForm(item) {
   formError.textContent = "";
   state.editingId = item?.id ?? null;
   $("post-title").textContent = item ? "Edit listing" : "Log found property";
-  $("post-submit").textContent = item ? "Save changes" : "Log item";
+  $("post-submit").textContent = item ? "Save changes" : "Add to auction";
 
   if (item) {
     fields.title.value = item.title;

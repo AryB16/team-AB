@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>AB Precinct · Lost Property</title>
-  <meta name="description" content="Unclaimed lost property from around campus. Browse, filter, see prices in your currency, and put in a claim.">
+  <title>AB Precinct · Property Auction</title>
+  <meta name="description" content="Lost property nobody claimed, auctioned by the AB Precinct. Browse lots, filter, see reserve prices in your currency, and place a bid.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,7 +14,7 @@
 <body>
   <header class="bar">
     <div class="wrap bar-row">
-      <a class="wordmark" href="./"><span class="wordmark-dept">AB Precinct</span> Lost Property</a>
+      <a class="wordmark" href="./"><span class="wordmark-dept">AB Precinct</span> Property Auction</a>
       <div class="bar-actions">
         <label class="currency-pill" title="Show prices in">
           <span class="pill-label">Price in</span>
@@ -27,24 +27,24 @@
 
   <main>
     <section class="hero wrap">
-      <h1>Unclaimed property</h1>
+      <h1>Unclaimed property auction</h1>
       <p class="hero-count" id="fact-count"></p>
     </section>
 
-    <section class="browse wrap" aria-label="Unclaimed items">
+    <section class="browse wrap" aria-label="Auction lots">
       <div class="controls">
-        <div class="chips" id="chips" role="radiogroup" aria-label="Category"></div>
+        <div class="chips" id="chips" role="radiogroup" aria-label="Property type"></div>
         <div class="controls-right">
           <label class="search">
             <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
-            <input id="search" type="search" placeholder="Search lost property" aria-label="Search lost property">
+            <input id="search" type="search" placeholder="Search the auction" aria-label="Search the auction">
           </label>
           <label class="sort">
             <span class="visually-hidden">Sort</span>
             <select id="sort">
               <option value="new">Newest first</option>
-              <option value="low">Price: low to high</option>
-              <option value="high">Price: high to low</option>
+              <option value="low">Reserve: low to high</option>
+              <option value="high">Reserve: high to low</option>
             </select>
           </label>
         </div>
@@ -66,11 +66,11 @@
 
   <dialog id="detail-dialog" class="sheet detail" aria-labelledby="detail-title">
     <div class="evidence-bag" id="detail-art">
-      <p class="bag-seal">Property bag · AB Precinct · Unclaimed</p>
+      <p class="bag-seal">Property bag · AB Precinct · Auction lot</p>
       <div class="bag-body">
         <div class="bag-window" id="detail-window"></div>
         <dl class="bag-label">
-          <div><dt>Ref no.</dt><dd id="bag-case"></dd></div>
+          <div><dt>Lot no.</dt><dd id="bag-case"></dd></div>
           <div><dt>Date found</dt><dd id="bag-date"></dd></div>
           <div><dt>Logged by</dt><dd id="bag-officer"></dd></div>
           <div><dt>Collect from</dt><dd id="detail-location"></dd></div>
@@ -84,10 +84,11 @@
       <p class="case-no" id="detail-case"></p>
       <p class="detail-badges" id="detail-badges"></p>
       <h2 id="detail-title"></h2>
+      <p class="price-kicker">Reserve price</p>
       <p class="detail-price"><span id="detail-price"></span> <span class="price-original" id="detail-original"></span></p>
       <p class="detail-description" id="detail-description"></p>
 
-      <h3 class="custody-title">Property history</h3>
+      <h3 class="custody-title">Lot history</h3>
       <ol class="custody" id="detail-custody"></ol>
 
       <div class="seller">
@@ -112,18 +113,18 @@
       </div>
 
       <label class="field">
-        <span>Item</span>
-        <input name="title" required maxlength="80" autocomplete="off" placeholder="e.g. Casio fx-991EX calculator">
+        <span>Item description</span>
+        <input name="title" required maxlength="80" autocomplete="off" placeholder="e.g. Black umbrella, left in the library">
       </label>
 
       <div class="field">
-        <span>Photo <em>optional</em></span>
+        <span>Photograph <em>optional</em></span>
         <label class="photo-drop">
           <input type="file" name="photo" accept="image/*" class="visually-hidden">
           <img id="photo-preview" alt="Selected photo" hidden>
           <span class="photo-empty" id="photo-empty">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.25"/></svg>
-            <span>Add a photo</span>
+            <span>Photograph item</span>
           </span>
         </label>
         <button class="link-btn" type="button" id="photo-remove" hidden>Remove photo</button>
@@ -136,7 +137,7 @@
 
       <div class="field-row">
         <div class="field">
-          <label for="price">Price</label>
+          <label for="price">Reserve price</label>
           <div class="price-input">
             <select name="currency" aria-label="Price currency"></select>
             <input id="price" name="price" type="number" inputmode="decimal" min="0" step="0.01" required placeholder="0.00">
@@ -149,7 +150,7 @@
       </div>
 
       <fieldset class="field">
-        <legend>Category</legend>
+        <legend>Property type</legend>
         <div class="category-options" id="category-options"></div>
       </fieldset>
 
@@ -179,7 +180,7 @@
 
       <div class="sheet-actions">
         <button class="btn btn-ghost" type="button" data-close>Cancel</button>
-        <button class="btn btn-primary" type="submit" id="post-submit">Log item</button>
+        <button class="btn btn-primary" type="submit" id="post-submit">Add to auction</button>
       </div>
     </form>
   </dialog>
