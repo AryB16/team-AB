@@ -160,7 +160,7 @@ function card(item) {
 
   fillArt(li.querySelector(".card-art"), item);
   li.querySelector(".card-title-text").textContent = item.title;
-  li.querySelector(".card-case").textContent = `Exhibit · ${caseType(item.category)}`;
+  li.querySelector(".card-case").textContent = `Exhibit: ${item.exhibit || caseType(item.category)}`;
   li.querySelector(".card-condition").textContent = stateOf(item.condition);
   li.querySelector(".card-where").textContent = `Held at ${item.location}`;
   li.querySelector(".avatar").textContent = initials(item.seller);
@@ -177,7 +177,7 @@ function visibleListings(all) {
     (item) =>
       (!state.category ||
         (state.category === SAVED ? item.saved : item.category === state.category)) &&
-      (!query || [item.title, item.description, item.location].join(" ").toLowerCase().includes(query))
+      (!query || [item.title, item.exhibit, item.description, item.location].join(" ").toLowerCase().includes(query))
   );
 
   if (state.sort !== "new") {
@@ -265,7 +265,7 @@ function fillDetail(item) {
   $("bag-officer").textContent = `Off. ${item.seller}`;
   fillCustody(item, interested);
 
-  $("detail-case").textContent = `Case file ${caseNumber(item.id)}`;
+  $("detail-case").textContent = `Case file ${caseNumber(item.id)}${item.exhibit ? ` · Exhibit: ${item.exhibit}` : ""}`;
   $("detail-badges").innerHTML = `<span class="badge">${caseType(item.category)}</span><span class="badge">${stateOf(item.condition)}</span>${statusBadge(item.status)}`;
   $("detail-title").textContent = item.title;
   $("detail-price").textContent = main;
@@ -556,7 +556,7 @@ form.addEventListener("submit", (event) => {
   const contactValue = fields.contactValue.value.trim();
 
   let problem = "";
-  if (!title) problem = "Describe the item for the record.";
+  if (!title) problem = "Give the case a name.";
   else if (fields.price.value === "" || !Number.isFinite(price) || price < 0) problem = "Enter a declared value of 0 or more.";
   else if (!fields.condition.value) problem = "Record the item's state.";
   else if (!fields.category.value) problem = "Pick a case type.";

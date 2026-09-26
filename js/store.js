@@ -30,7 +30,8 @@ function seed() {
 
   return [
     {
-      title: "Scientific calculator",
+      title: "The Block B Calculator",
+      exhibit: "Scientific calculator",
       category: "Electronics",
       condition: "Like new",
       price: 45,
@@ -41,7 +42,8 @@ function seed() {
       posted: at(3),
     },
     {
-      title: "Engineering maths textbook",
+      title: "The Annotated Integrals",
+      exhibit: "Engineering maths textbook",
       category: "Books",
       condition: "Used",
       price: 650,
@@ -52,7 +54,8 @@ function seed() {
       posted: at(20),
     },
     {
-      title: "LED desk lamp",
+      title: "The Hostel 2 Lamp",
+      exhibit: "LED desk lamp",
       category: "Dorm essentials",
       condition: "Like new",
       price: 30,
@@ -64,7 +67,8 @@ function seed() {
       posted: at(28),
     },
     {
-      title: "Microcontroller kit, parts missing",
+      title: "The Missing Servo",
+      exhibit: "Microcontroller kit, parts missing",
       category: "Electronics",
       condition: "Like new",
       price: 22,
@@ -75,7 +79,8 @@ function seed() {
       posted: at(49),
     },
     {
-      title: "Compact refrigerator",
+      title: "The Humming Fridge",
+      exhibit: "Compact refrigerator",
       category: "Appliances",
       condition: "Used",
       price: 180,
@@ -86,7 +91,8 @@ function seed() {
       posted: at(74),
     },
     {
-      title: "Electric kettle",
+      title: "The Descaled Kettle",
+      exhibit: "Electric kettle",
       category: "Appliances",
       icon: "kettle",
       condition: "Like new",
@@ -98,7 +104,8 @@ function seed() {
       posted: at(98),
     },
     {
-      title: "Laboratory coat",
+      title: "The Nameless Lab Coat",
+      exhibit: "Laboratory coat",
       category: "Clothing",
       condition: "Used",
       price: 15,
@@ -110,7 +117,8 @@ function seed() {
       posted: at(122),
     },
     {
-      title: "Swivel office chair",
+      title: "The Loose Armrest",
+      exhibit: "Swivel office chair",
       category: "Furniture",
       condition: "Used",
       price: 120,
@@ -121,7 +129,8 @@ function seed() {
       posted: at(170),
     },
     {
-      title: "Sealed notebooks",
+      title: "The Unopened Notebooks",
+      exhibit: "Sealed notebooks",
       category: "Stationery",
       condition: "New",
       price: 12,
@@ -132,7 +141,8 @@ function seed() {
       posted: at(220),
     },
     {
-      title: "Programming textbook",
+      title: "The Worn-Cover Textbook",
+      exhibit: "Programming textbook",
       category: "Books",
       condition: "Used",
       price: 60,
@@ -160,7 +170,7 @@ for (const item of items) {
   if (item.photo && typeof item.photo !== "string") delete item.photo;
   delete item.interested;
   const sample = samples.get(item.id);
-  if (sample) Object.assign(item, { title: sample.title, description: sample.description });
+  if (sample) Object.assign(item, { title: sample.title, exhibit: sample.exhibit, description: sample.description });
 }
 
 function load() {
