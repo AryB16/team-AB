@@ -1,35 +1,38 @@
 :root {
-  --bg: #e7e1d5;
-  --surface: #f3efe7;
-  --ink: #171511;
-  --ink-2: #3d3931;
-  --muted: #6a6459;
-  --line: #d4cab8;
-  --line-strong: #b8ac95;
-  --accent: #1f3b30;
-  --accent-ink: #f4f0e8;
-  --accent-soft: #d5dfd6;
-  --error: #9b3a20;
-  --scrim: rgb(18 16 13 / 0.5);
-  --sheet: #fbf9f5;
-  --reserved: #8a5a12;
-  --reserved-soft: #f6e9cf;
-  --heart: #b23a3a;
+  --bg: #e2d8c1;
+  --surface: #f0e2bb;
+  --ink: #1b1a17;
+  --ink-2: #3a362d;
+  --muted: #6c6454;
+  --line: #cbb98f;
+  --line-strong: #a38f63;
+  --accent: #1f2b45;
+  --accent-ink: #f4efe2;
+  --accent-soft: #dde2ec;
+  --error: #a3261c;
+  --scrim: rgb(18 16 13 / 0.55);
+  --sheet: #fbf7ec;
+  --stamp: #b1261c;
+  --reserved: #1f4e8c;
+  --reserved-soft: transparent;
 
-  --tint-books: #e1d2b6;
-  --tint-electronics: #cdd6d7;
-  --tint-appliances: #d0d8e1;
-  --tint-dorm: #e5d5ae;
-  --tint-furniture: #dbcbb8;
-  --tint-clothing: #e2cbc2;
-  --tint-stationery: #d4d9bd;
-  --tint-other: #d9d2c5;
+  --tint-books: #f7efd9;
+  --tint-electronics: #f7efd9;
+  --tint-appliances: #f7efd9;
+  --tint-dorm: #f7efd9;
+  --tint-furniture: #f7efd9;
+  --tint-clothing: #f7efd9;
+  --tint-stationery: #f7efd9;
+  --tint-other: #f7efd9;
 
   --sans: "Figtree", system-ui, -apple-system, sans-serif;
+  /* Typewriter lettering from fonts every device already has: nothing new to load. */
+  --type: "American Typewriter", "Courier New", Courier, monospace;
 
   --wrap: 72rem;
   --gutter: clamp(1rem, 4vw, 2rem);
-  --radius: 16px;
+  --radius: 6px;
+  --r-sm: 4px;
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
@@ -129,7 +132,7 @@ button {
   justify-content: center;
   height: 2.5rem;
   padding: 0 1.1rem;
-  border-radius: 999px;
+  border-radius: var(--r-sm);
   border: 1px solid transparent;
   font-size: 0.9rem;
   font-weight: 500;
@@ -197,7 +200,7 @@ button {
   padding: 0 2.25rem 0 1rem;
   background: var(--surface);
   border: 1px solid var(--line-strong);
-  border-radius: 999px;
+  border-radius: var(--r-sm);
   font-size: 0.875rem;
   cursor: pointer;
   transition: border-color 160ms var(--ease);
@@ -278,7 +281,7 @@ button {
   height: 2.25rem;
   padding: 0 0.95rem;
   border: 1px solid var(--line-strong);
-  border-radius: 999px;
+  border-radius: var(--r-sm);
   background: transparent;
   font-size: 0.875rem;
   cursor: pointer;
@@ -324,7 +327,7 @@ button {
   padding: 0 1rem 0 2.35rem;
   background: var(--surface);
   border: 1px solid var(--line-strong);
-  border-radius: 999px;
+  border-radius: var(--r-sm);
   font-size: 0.875rem;
   transition: border-color 160ms var(--ease);
 }
@@ -547,7 +550,7 @@ button {
   flex-shrink: 0;
   height: 1.3rem;
   padding: 0 0.5rem;
-  border-radius: 999px;
+  border-radius: var(--r-sm);
   background: var(--bg);
   color: var(--ink-2);
   font-size: 0.7rem;
@@ -621,7 +624,7 @@ button {
   max-height: calc(100dvh - 2rem);
   padding: 0;
   border: 0;
-  border-radius: 20px;
+  border-radius: 8px;
   background: var(--sheet);
   color: var(--ink);
   box-shadow: 0 30px 80px -20px rgb(0 0 0 / 0.45), 0 0 0 1px rgb(0 0 0 / 0.06);
@@ -668,7 +671,7 @@ button {
   width: 2.25rem;
   height: 2.25rem;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--r-sm);
   background: transparent;
   cursor: pointer;
   transition: background-color 160ms var(--ease);
@@ -1128,16 +1131,6 @@ button {
 
 /* Saved listings */
 
-.heart {
-  flex-shrink: 0;
-  width: 0.95rem;
-  height: 0.95rem;
-  fill: var(--heart);
-  stroke: var(--heart);
-  stroke-width: 1.5;
-  stroke-linejoin: round;
-}
-
 .detail-row {
   display: flex;
   gap: 0.5rem;
@@ -1152,18 +1145,6 @@ button {
   gap: 0.4rem;
   height: 2.9rem;
   padding: 0 1.1rem;
-}
-
-.btn-save .heart {
-  width: 1.1rem;
-  height: 1.1rem;
-  fill: none;
-  stroke: currentColor;
-}
-
-.btn-save[aria-pressed="true"] .heart {
-  fill: var(--heart);
-  stroke: var(--heart);
 }
 
 .chip[data-value="__saved"] {
@@ -1190,6 +1171,172 @@ button {
   background: var(--error);
   border-color: var(--error);
   color: var(--sheet);
+}
+
+/* Case-file theme (round 4) */
+
+.wordmark {
+  font-family: var(--type);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.wordmark-dept {
+  display: block;
+  margin-bottom: 0.15rem;
+  font-family: var(--sans);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--stamp);
+}
+
+.hero h1,
+.sheet-head h2,
+.detail-body h2 {
+  font-family: var(--type);
+  letter-spacing: -0.01em;
+}
+
+.hero h1 {
+  text-transform: uppercase;
+}
+
+.hero-count,
+.rate-note,
+.chip,
+.card-case,
+.case-no,
+.badge,
+.btn {
+  font-family: var(--type);
+}
+
+.chip,
+.btn {
+  letter-spacing: 0.02em;
+}
+
+/* Each listing is a manila folder with a tab on top. */
+.grid {
+  row-gap: 1.35rem;
+  padding-top: 0.6rem;
+}
+
+.card {
+  position: relative;
+  border-top-left-radius: 0;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: -0.7rem;
+  left: -1px;
+  width: 7rem;
+  height: 0.7rem;
+  background: inherit;
+  border: 1px solid var(--line);
+  border-bottom: 0;
+  border-radius: 6px 6px 0 0;
+}
+
+.card:hover::before {
+  border-color: var(--line-strong);
+}
+
+.card-case {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+/* Evidence tags: a paper tag with a red seal strip. */
+.card-art {
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--stamp);
+  border-radius: 3px;
+}
+
+.card-art svg,
+.detail-art svg {
+  stroke: var(--ink);
+}
+
+/* Statuses are rubber stamps. */
+.badge-reserved,
+.badge-sold {
+  height: auto;
+  padding: 0.05rem 0.4rem;
+  border: 2px solid currentColor;
+  border-radius: 3px;
+  background: transparent;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transform: rotate(-4deg);
+}
+
+.badge-reserved {
+  color: var(--reserved);
+}
+
+.badge-sold {
+  color: var(--stamp);
+  background: transparent;
+}
+
+.case-no {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--stamp);
+}
+
+.detail-art {
+  border-bottom: 1px dashed var(--line-strong);
+}
+
+.redacted {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--ink);
+  letter-spacing: -0.12em;
+  line-height: 1.1;
+  user-select: none;
+}
+
+.avatar {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.flag {
+  flex-shrink: 0;
+  width: 0.95rem;
+  height: 0.95rem;
+  fill: var(--stamp);
+  stroke: var(--stamp);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.btn-save .flag {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: none;
+  stroke: currentColor;
+}
+
+.btn-save[aria-pressed="true"] .flag {
+  fill: var(--stamp);
+  stroke: var(--stamp);
 }
 
 /* Small screens */

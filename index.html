@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>AB Marketplace</title>
-  <meta name="description" content="Post things you want to sell, browse what's up, and see every price in your own currency.">
+  <title>AB Precinct · Evidence Locker</title>
+  <meta name="description" content="Log items as evidence, search the case files, and request clearance to reach the reporting officer.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,37 +14,37 @@
 <body>
   <header class="bar">
     <div class="wrap bar-row">
-      <a class="wordmark" href="./">AB Marketplace</a>
+      <a class="wordmark" href="./"><span class="wordmark-dept">AB Precinct</span> Evidence Locker</a>
       <div class="bar-actions">
-        <label class="currency-pill" title="Show prices in">
-          <span class="visually-hidden">Show prices in</span>
+        <label class="currency-pill" title="Show valuations in">
+          <span class="visually-hidden">Show valuations in</span>
           <select id="currency" aria-describedby="rate-note"></select>
         </label>
-        <button class="btn btn-primary" id="open-post" type="button">Post<span class="post-label-extra">&nbsp;a listing</span></button>
+        <button class="btn btn-primary" id="open-post" type="button">Log<span class="post-label-extra">&nbsp;evidence</span></button>
       </div>
     </div>
   </header>
 
   <main>
     <section class="hero wrap">
-      <h1>Buy and sell nearby</h1>
+      <h1>Evidence on file</h1>
       <p class="hero-count" id="fact-count"></p>
     </section>
 
-    <section class="browse wrap" aria-label="Listings">
+    <section class="browse wrap" aria-label="Case files">
       <div class="controls">
-        <div class="chips" id="chips" role="radiogroup" aria-label="Category"></div>
+        <div class="chips" id="chips" role="radiogroup" aria-label="Case type"></div>
         <div class="controls-right">
           <label class="search">
             <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
-            <input id="search" type="search" placeholder="Search listings" aria-label="Search listings">
+            <input id="search" type="search" placeholder="Search the files" aria-label="Search the files">
           </label>
           <label class="sort">
             <span class="visually-hidden">Sort</span>
             <select id="sort">
-              <option value="new">Newest first</option>
-              <option value="low">Price: low to high</option>
-              <option value="high">Price: high to low</option>
+              <option value="new">Most recent</option>
+              <option value="low">Value: low to high</option>
+              <option value="high">Value: high to low</option>
             </select>
           </label>
         </div>
@@ -55,13 +55,13 @@
       <ul id="listings" class="grid"></ul>
       <div id="empty" class="empty" hidden>
         <p id="empty-text"></p>
-        <button class="btn btn-ghost" type="button" id="clear-filters">Clear filters</button>
+        <button class="btn btn-ghost" type="button" id="clear-filters">Reopen all files</button>
       </div>
     </section>
   </main>
 
   <footer class="foot wrap">
-    <p>Rates by <a href="https://frankfurter.dev" rel="noopener">Frankfurter</a></p>
+    <p>AB Precinct records office · Valuations by <a href="https://frankfurter.dev" rel="noopener">Frankfurter</a></p>
   </footer>
 
   <dialog id="detail-dialog" class="sheet detail" aria-labelledby="detail-title">
@@ -70,14 +70,15 @@
       <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg>
     </button>
     <div class="detail-body">
+      <p class="case-no" id="detail-case"></p>
       <p class="detail-badges" id="detail-badges"></p>
       <h2 id="detail-title"></h2>
       <p class="detail-price"><span id="detail-price"></span> <span class="price-original" id="detail-original"></span></p>
       <p class="detail-description" id="detail-description"></p>
 
       <dl class="detail-facts">
-        <div><dt>Pickup</dt><dd id="detail-location"></dd></div>
-        <div><dt>Posted</dt><dd id="detail-posted"></dd></div>
+        <div><dt>Held at</dt><dd id="detail-location"></dd></div>
+        <div><dt>Logged</dt><dd id="detail-posted"></dd></div>
       </dl>
 
       <div class="seller">
@@ -95,66 +96,66 @@
   <dialog id="post-dialog" class="sheet" aria-labelledby="post-title">
     <form id="post-form" method="dialog" novalidate>
       <div class="sheet-head">
-        <h2 id="post-title">Post a listing</h2>
+        <h2 id="post-title">Log new evidence</h2>
         <button class="icon-btn" type="button" data-close aria-label="Close">
           <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg>
         </button>
       </div>
 
       <label class="field">
-        <span>Title</span>
+        <span>Item description</span>
         <input name="title" required maxlength="80" autocomplete="off" placeholder="e.g. Casio fx-991EX calculator">
       </label>
 
       <div class="field">
-        <span>Photo <em>optional</em></span>
+        <span>Exhibit photo <em>optional</em></span>
         <label class="photo-drop">
           <input type="file" name="photo" accept="image/*" class="visually-hidden">
           <img id="photo-preview" alt="Selected photo" hidden>
           <span class="photo-empty" id="photo-empty">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.25"/></svg>
-            <span>Add a photo</span>
+            <span>Attach exhibit photo</span>
           </span>
         </label>
-        <button class="link-btn" type="button" id="photo-remove" hidden>Remove photo</button>
+        <button class="link-btn" type="button" id="photo-remove" hidden>Remove exhibit photo</button>
       </div>
 
       <label class="field">
-        <span>Description <em>optional</em></span>
-        <textarea name="description" rows="3" maxlength="500" placeholder="Condition details, what's included, why you're selling"></textarea>
+        <span>Officer's notes <em>optional</em></span>
+        <textarea name="description" rows="3" maxlength="500" placeholder="Condition, what's included, why it's being released"></textarea>
       </label>
 
       <div class="field-row">
         <div class="field">
-          <label for="price">Price</label>
+          <label for="price">Declared value</label>
           <div class="price-input">
             <select name="currency" aria-label="Price currency"></select>
             <input id="price" name="price" type="number" inputmode="decimal" min="0" step="0.01" required placeholder="0.00">
           </div>
         </div>
         <fieldset class="field">
-          <legend>Condition</legend>
+          <legend>State</legend>
           <div class="segmented" id="condition-options"></div>
         </fieldset>
       </div>
 
       <fieldset class="field">
-        <legend>Category</legend>
+        <legend>Case type</legend>
         <div class="category-options" id="category-options"></div>
       </fieldset>
 
       <label class="field">
-        <span>Pickup point</span>
+        <span>Held at</span>
         <input name="location" required maxlength="60" autocomplete="off" placeholder="e.g. Hostel 2 reception">
       </label>
 
       <div class="field-row contact-row">
         <label class="field">
-          <span>Your name</span>
+          <span>Reporting officer</span>
           <input name="seller" required maxlength="40" autocomplete="name">
         </label>
         <div class="field">
-          <label for="contact-value">Contact</label>
+          <label for="contact-value">Secure line</label>
           <div class="price-input">
             <select name="contactMethod" class="contact-method" aria-label="Contact method">
               <option value="whatsapp">WhatsApp</option>
@@ -169,7 +170,7 @@
 
       <div class="sheet-actions">
         <button class="btn btn-ghost" type="button" data-close>Cancel</button>
-        <button class="btn btn-primary" type="submit" id="post-submit">Post listing</button>
+        <button class="btn btn-primary" type="submit" id="post-submit">File it</button>
       </div>
     </form>
   </dialog>
