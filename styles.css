@@ -1,11 +1,11 @@
 :root {
-  --bg: #e2d8c1;
-  --surface: #f0e2bb;
+  --bg: #d3c6a6;
+  --surface: #f6ecd2;
   --ink: #1b1a17;
-  --ink-2: #3a362d;
-  --muted: #6c6454;
-  --line: #cbb98f;
-  --line-strong: #a38f63;
+  --ink-2: #33302a;
+  --muted: #564f41;
+  --line: #bba97f;
+  --line-strong: #8f7d55;
   --accent: #1f2b45;
   --accent-ink: #f4efe2;
   --accent-soft: #dde2ec;
@@ -25,8 +25,7 @@
   --tint-stationery: #f7efd9;
   --tint-other: #f7efd9;
 
-  --sans: "Figtree", system-ui, -apple-system, sans-serif;
-  /* Typewriter lettering from fonts every device already has: nothing new to load. */
+  /* Typewriter lettering from fonts every device already has: nothing to download. */
   --type: "American Typewriter", "Courier New", Courier, monospace;
 
   --wrap: 72rem;
@@ -50,7 +49,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 400 1rem/1.55 var(--sans);
+  font: 400 1rem/1.55 var(--type);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -1184,7 +1183,7 @@ button {
 .wordmark-dept {
   display: block;
   margin-bottom: 0.15rem;
-  font-family: var(--sans);
+  font-family: var(--type);
   font-size: 0.65rem;
   font-weight: 600;
   letter-spacing: 0.14em;
@@ -1351,6 +1350,201 @@ button {
   stroke: var(--stamp);
 }
 
+/* Chips wrap instead of disappearing off the edge. */
+.chips {
+  flex-wrap: wrap;
+  overflow: visible;
+}
+
+.card-title-text {
+  font-weight: 700;
+}
+
+.card-facts,
+.card-meta,
+.seller-contact {
+  font-family: var(--type);
+}
+
+.card-case {
+  color: var(--ink-2);
+}
+
+/* Status stamps sit on the folder's top-right corner, off the title line. */
+.card .badge-reserved,
+.card .badge-sold {
+  position: absolute;
+  top: -0.7rem;
+  right: 0.9rem;
+  z-index: 1;
+  background: var(--surface);
+}
+
+/* The detail view opens on a sealed evidence bag with a printed label. */
+.evidence-bag {
+  padding: 0 1.5rem 1.1rem;
+  background: #f3f1ea;
+  border-bottom: 1px dashed var(--line-strong);
+}
+
+.bag-seal {
+  margin: 0 -1.5rem 1rem;
+  padding: 0.45rem 3.5rem 0.45rem 1.5rem;
+  background: var(--stamp);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.bag-body {
+  display: grid;
+  grid-template-columns: 8.5rem 1fr;
+  gap: 1.1rem;
+  align-items: center;
+}
+
+.bag-body:has(.has-photo) {
+  grid-template-columns: 1fr;
+}
+
+.bag-window {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+}
+
+.bag-window svg {
+  width: 3.75rem;
+  height: 3.75rem;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bag-window.has-photo {
+  aspect-ratio: auto;
+  padding: 0.5rem;
+}
+
+.bag-window.has-photo img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: min(18rem, 40dvh);
+  object-fit: contain;
+}
+
+.bag-label {
+  margin: 0;
+  border: 1.5px solid var(--ink);
+  font-size: 0.8rem;
+}
+
+.bag-label div {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+  padding: 0.3rem 0.6rem;
+  border-bottom: 1px dotted var(--ink-2);
+}
+
+.bag-label div:last-child {
+  border-bottom: 0;
+}
+
+.bag-label dt {
+  color: var(--ink-2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.7rem;
+  align-self: center;
+}
+
+.bag-label dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.detail-close {
+  top: 0.2rem;
+  right: 0.5rem;
+  z-index: 1;
+}
+
+/* Chain of custody timeline */
+
+.custody-title {
+  margin: 1.2rem 0 0.6rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.custody {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.custody li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 0.8rem 1.6rem;
+}
+
+.custody li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.3rem;
+  width: 0.7rem;
+  height: 0.7rem;
+  border: 2px solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--sheet);
+}
+
+.custody li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 0.33rem;
+  top: 1.15rem;
+  bottom: 0.05rem;
+  border-left: 2px dotted var(--line-strong);
+}
+
+.custody li.is-done::before {
+  border-color: var(--ink);
+  background: var(--ink);
+}
+
+.custody li.is-done:not(:last-child)::after {
+  border-left-style: solid;
+  border-color: var(--ink);
+}
+
+.step {
+  font-weight: 700;
+}
+
+.custody li:not(.is-done) .step {
+  color: var(--muted);
+}
+
+.step-note {
+  font-size: 0.8rem;
+  color: var(--ink-2);
+}
+
 /* Small screens */
 
 @media (max-width: 44rem) {
@@ -1393,9 +1587,22 @@ button {
     padding-left: 0.8rem;
   }
 
+  /* On phones the chips scroll sideways, with a fade hinting at more. */
   .chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
     margin-inline: calc(-1 * var(--gutter));
     padding-inline: var(--gutter);
+    mask-image: linear-gradient(to right, #000 85%, transparent);
+  }
+
+  .bag-body {
+    grid-template-columns: 6rem 1fr;
+    gap: 0.8rem;
+  }
+
+  .bag-label div {
+    grid-template-columns: 5.2rem 1fr;
   }
 
   #open-post {

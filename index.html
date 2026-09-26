@@ -6,9 +6,6 @@
   <meta name="color-scheme" content="light">
   <title>AB Precinct · Evidence Locker</title>
   <meta name="description" content="Log items as evidence, search the case files, and request clearance to reach the reporting officer.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -65,7 +62,18 @@
   </footer>
 
   <dialog id="detail-dialog" class="sheet detail" aria-labelledby="detail-title">
-    <div class="detail-art" id="detail-art"></div>
+    <div class="evidence-bag" id="detail-art">
+      <p class="bag-seal">Evidence · AB Precinct · Do not tamper</p>
+      <div class="bag-body">
+        <div class="bag-window" id="detail-window"></div>
+        <dl class="bag-label">
+          <div><dt>Case no.</dt><dd id="bag-case"></dd></div>
+          <div><dt>Date logged</dt><dd id="bag-date"></dd></div>
+          <div><dt>Officer</dt><dd id="bag-officer"></dd></div>
+          <div><dt>Held at</dt><dd id="detail-location"></dd></div>
+        </dl>
+      </div>
+    </div>
     <button class="icon-btn detail-close" type="button" data-close aria-label="Close">
       <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg>
     </button>
@@ -76,10 +84,8 @@
       <p class="detail-price"><span id="detail-price"></span> <span class="price-original" id="detail-original"></span></p>
       <p class="detail-description" id="detail-description"></p>
 
-      <dl class="detail-facts">
-        <div><dt>Held at</dt><dd id="detail-location"></dd></div>
-        <div><dt>Logged</dt><dd id="detail-posted"></dd></div>
-      </dl>
+      <h3 class="custody-title">Chain of custody</h3>
+      <ol class="custody" id="detail-custody"></ol>
 
       <div class="seller">
         <span class="avatar" id="detail-avatar" aria-hidden="true"></span>
@@ -104,7 +110,7 @@
 
       <label class="field">
         <span>Item description</span>
-        <input name="title" required maxlength="80" autocomplete="off" placeholder="e.g. Casio fx-991EX calculator">
+        <input name="title" required maxlength="80" autocomplete="off" placeholder="e.g. Scientific calculator, recovered from Block B">
       </label>
 
       <div class="field">

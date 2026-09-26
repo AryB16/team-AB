@@ -71,6 +71,7 @@ function writePref(code) {
 
 const relative = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 const dateFmt = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short" });
+const fullDate = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" });
 
 function timeAgo(iso) {
   const minutes = Math.round((Date.now() - new Date(iso)) / 60000);
@@ -202,7 +203,10 @@ function render() {
   }
 
   const available = all.filter((item) => item.status !== "sold").length;
-  $("fact-count").textContent = `${available} open ${available === 1 ? "case" : "cases"}`;
+  const filtered = state.category || state.query.trim();
+  $("fact-count").textContent = filtered
+    ? `${shown.length} of ${all.length} files shown`
+    : `${available} open ${available === 1 ? "case" : "cases"}`;
 
   for (const chip of chips.children) {
     chip.setAttribute("aria-checked", String(chip.dataset.value === state.category));
@@ -250,9 +254,12 @@ function fillDetail(item) {
   const { main, original } = prices(item);
   const interested = state.interested.has(item.id);
 
-  const art = $("detail-art");
-  art.dataset.category = item.category;
-  fillArt(art, item);
+  $("detail-art").dataset.category = item.category;
+  fillArt($("detail-window"), item);
+  $("bag-case").textContent = caseNumber(item.id);
+  $("bag-date").textContent = fullDate.format(new Date(item.posted));
+  $("bag-officer").textContent = `Off. ${item.seller}`;
+  fillCustody(item, interested);
 
   $("detail-case").textContent = `Case file ${caseNumber(item.id)}`;
   $("detail-badges").innerHTML = `<span class="badge">${caseType(item.category)}</span><span class="badge">${stateOf(item.condition)}</span>${statusBadge(item.status)}`;
@@ -262,7 +269,6 @@ function fillDetail(item) {
   $("detail-description").textContent = item.description || "No notes on file.";
   $("detail-description").classList.toggle("is-empty", !item.description);
   $("detail-location").textContent = item.location;
-  $("detail-posted").textContent = timeAgo(item.posted);
   $("detail-avatar").textContent = initials(item.seller);
   $("detail-seller").textContent = `Reporting officer: ${item.seller}${item.mine ? " (you)" : ""}`;
   const via = item.contact.method === "whatsapp" ? "WhatsApp" : "email";
@@ -376,6 +382,36 @@ function fillDetail(item) {
   hint.textContent = `Clearance granted. Collect it from ${item.location} and ask for Officer ${item.seller.split(" ").at(-1)}.`;
   row.append(link, saveButton);
   actions.append(hint);
+}
+
+// The listing's status history, told as an evidence chain of custody.
+function fillCustody(item, interested) {
+  const sold = item.status === "sold";
+  const steps = [{ label: "Logged", note: `${timeAgo(item.posted)} by Off. ${item.seller}`, done: true }];
+  if (item.status === "reserved") {
+    steps.push({ label: "Under investigation", note: "Another claimant has a hold on it", done: true });
+  }
+  steps.push({
+    label: "Clearance requested",
+    note: sold ? "Granted to a claimant" : interested ? "By you, during this visit" : item.mine ? "Waiting for a claimant" : "Not yet requested",
+    done: sold || interested,
+  });
+  steps.push({ label: "Case closed", note: sold ? "Item released from the locker" : "Still held", done: sold });
+
+  $("detail-custody").replaceChildren(
+    ...steps.map(({ label, note, done }) => {
+      const li = document.createElement("li");
+      if (done) li.className = "is-done";
+      const title = document.createElement("span");
+      title.className = "step";
+      title.textContent = label;
+      const detail = document.createElement("span");
+      detail.className = "step-note";
+      detail.textContent = note;
+      li.append(title, detail);
+      return li;
+    })
+  );
 }
 
 function openDetail(id) {
