@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>AB Precinct · Evidence Locker</title>
-  <meta name="description" content="Log items as evidence, search the case files, and request clearance to reach the reporting officer.">
+  <title>AB Precinct · Lost Property Sale</title>
+  <meta name="description" content="Unclaimed lost property from around campus, for sale. Browse, filter, see prices in your currency, and request to buy.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,37 +14,37 @@
 <body>
   <header class="bar">
     <div class="wrap bar-row">
-      <a class="wordmark" href="./"><span class="wordmark-dept">AB Precinct</span> Evidence Locker</a>
+      <a class="wordmark" href="./"><span class="wordmark-dept">AB Precinct</span> Lost Property Sale</a>
       <div class="bar-actions">
-        <label class="currency-pill" title="Show assessed values in">
-          <span class="pill-label">Value in</span>
+        <label class="currency-pill" title="Show prices in">
+          <span class="pill-label">Price in</span>
           <select id="currency" aria-describedby="rate-note"></select>
         </label>
-        <button class="btn btn-primary" id="open-post" type="button">Log<span class="post-label-extra">&nbsp;evidence</span></button>
+        <button class="btn btn-primary" id="open-post" type="button">List<span class="post-label-extra">&nbsp;an item</span></button>
       </div>
     </div>
   </header>
 
   <main>
     <section class="hero wrap">
-      <h1>Evidence on file</h1>
+      <h1>Unclaimed property for sale</h1>
       <p class="hero-count" id="fact-count"></p>
     </section>
 
-    <section class="browse wrap" aria-label="Case files">
+    <section class="browse wrap" aria-label="Items for sale">
       <div class="controls">
-        <div class="chips" id="chips" role="radiogroup" aria-label="Case type"></div>
+        <div class="chips" id="chips" role="radiogroup" aria-label="Category"></div>
         <div class="controls-right">
           <label class="search">
             <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
-            <input id="search" type="search" placeholder="Search the files" aria-label="Search the files">
+            <input id="search" type="search" placeholder="Search lost property" aria-label="Search lost property">
           </label>
           <label class="sort">
             <span class="visually-hidden">Sort</span>
             <select id="sort">
-              <option value="new">Most recent</option>
-              <option value="low">Value: low to high</option>
-              <option value="high">Value: high to low</option>
+              <option value="new">Newest first</option>
+              <option value="low">Price: low to high</option>
+              <option value="high">Price: high to low</option>
             </select>
           </label>
         </div>
@@ -55,25 +55,25 @@
       <ul id="listings" class="grid"></ul>
       <div id="empty" class="empty" hidden>
         <p id="empty-text"></p>
-        <button class="btn btn-ghost" type="button" id="clear-filters">Reopen all files</button>
+        <button class="btn btn-ghost" type="button" id="clear-filters">Clear filters</button>
       </div>
     </section>
   </main>
 
   <footer class="foot wrap">
-    <p>AB Precinct records office · Valuations by <a href="https://frankfurter.dev" rel="noopener">Frankfurter</a></p>
+    <p>AB Precinct property office · Exchange rates by <a href="https://frankfurter.dev" rel="noopener">Frankfurter</a></p>
   </footer>
 
   <dialog id="detail-dialog" class="sheet detail" aria-labelledby="detail-title">
     <div class="evidence-bag" id="detail-art">
-      <p class="bag-seal">Evidence · AB Precinct · Do not tamper</p>
+      <p class="bag-seal">Property bag · AB Precinct · Unclaimed</p>
       <div class="bag-body">
         <div class="bag-window" id="detail-window"></div>
         <dl class="bag-label">
-          <div><dt>Case no.</dt><dd id="bag-case"></dd></div>
-          <div><dt>Date logged</dt><dd id="bag-date"></dd></div>
-          <div><dt>Officer</dt><dd id="bag-officer"></dd></div>
-          <div><dt>Held at</dt><dd id="detail-location"></dd></div>
+          <div><dt>Ref no.</dt><dd id="bag-case"></dd></div>
+          <div><dt>Date found</dt><dd id="bag-date"></dd></div>
+          <div><dt>Logged by</dt><dd id="bag-officer"></dd></div>
+          <div><dt>Collect from</dt><dd id="detail-location"></dd></div>
         </dl>
       </div>
     </div>
@@ -87,7 +87,7 @@
       <p class="detail-price"><span id="detail-price"></span> <span class="price-original" id="detail-original"></span></p>
       <p class="detail-description" id="detail-description"></p>
 
-      <h3 class="custody-title">Chain of custody</h3>
+      <h3 class="custody-title">Property history</h3>
       <ol class="custody" id="detail-custody"></ol>
 
       <div class="seller">
@@ -105,66 +105,66 @@
   <dialog id="post-dialog" class="sheet" aria-labelledby="post-title">
     <form id="post-form" method="dialog" novalidate>
       <div class="sheet-head">
-        <h2 id="post-title">Log new evidence</h2>
+        <h2 id="post-title">Log found property</h2>
         <button class="icon-btn" type="button" data-close aria-label="Close">
           <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg>
         </button>
       </div>
 
       <label class="field">
-        <span>Case name</span>
-        <input name="title" required maxlength="80" autocomplete="off" placeholder="e.g. The Block B Calculator">
+        <span>Item</span>
+        <input name="title" required maxlength="80" autocomplete="off" placeholder="e.g. Casio fx-991EX calculator">
       </label>
 
       <div class="field">
-        <span>Exhibit photo <em>optional</em></span>
+        <span>Photo <em>optional</em></span>
         <label class="photo-drop">
           <input type="file" name="photo" accept="image/*" class="visually-hidden">
           <img id="photo-preview" alt="Selected photo" hidden>
           <span class="photo-empty" id="photo-empty">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.25"/></svg>
-            <span>Attach exhibit photo</span>
+            <span>Add a photo</span>
           </span>
         </label>
-        <button class="link-btn" type="button" id="photo-remove" hidden>Remove exhibit photo</button>
+        <button class="link-btn" type="button" id="photo-remove" hidden>Remove photo</button>
       </div>
 
       <label class="field">
-        <span>Officer's notes <em>optional</em></span>
-        <textarea name="description" rows="3" maxlength="500" placeholder="What the item is, its condition, and what's included"></textarea>
+        <span>Notes <em>optional</em></span>
+        <textarea name="description" rows="3" maxlength="500" placeholder="Where it was found, its condition, what's included"></textarea>
       </label>
 
       <div class="field-row">
         <div class="field">
-          <label for="price">Declared value</label>
+          <label for="price">Price</label>
           <div class="price-input">
             <select name="currency" aria-label="Price currency"></select>
             <input id="price" name="price" type="number" inputmode="decimal" min="0" step="0.01" required placeholder="0.00">
           </div>
         </div>
         <fieldset class="field">
-          <legend>State</legend>
+          <legend>Condition</legend>
           <div class="segmented" id="condition-options"></div>
         </fieldset>
       </div>
 
       <fieldset class="field">
-        <legend>Case type</legend>
+        <legend>Category</legend>
         <div class="category-options" id="category-options"></div>
       </fieldset>
 
       <label class="field">
-        <span>Held at</span>
+        <span>Collect from</span>
         <input name="location" required maxlength="60" autocomplete="off" placeholder="e.g. Hostel 2 reception">
       </label>
 
       <div class="field-row contact-row">
         <label class="field">
-          <span>Reporting officer</span>
+          <span>Logging officer</span>
           <input name="seller" required maxlength="40" autocomplete="name">
         </label>
         <div class="field">
-          <label for="contact-value">Secure line</label>
+          <label for="contact-value">Contact</label>
           <div class="price-input">
             <select name="contactMethod" class="contact-method" aria-label="Contact method">
               <option value="whatsapp">WhatsApp</option>
@@ -179,7 +179,7 @@
 
       <div class="sheet-actions">
         <button class="btn btn-ghost" type="button" data-close>Cancel</button>
-        <button class="btn btn-primary" type="submit" id="post-submit">File it</button>
+        <button class="btn btn-primary" type="submit" id="post-submit">List for sale</button>
       </div>
     </form>
   </dialog>

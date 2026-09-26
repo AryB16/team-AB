@@ -20,20 +20,13 @@ const STORAGE_KEY = "display-currency";
 const SAVED = "__saved";
 const FLAG = `<svg class="flag" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4M6 4h11l-2.5 4L17 12H6"/></svg>`;
 
-// The data keeps its original values; only the words on screen follow the case-file theme.
+// The data keeps its original values; a few category names read better for found property.
 const CASE_TYPES = {
-  Books: "Documents",
-  Electronics: "Digital devices",
-  Appliances: "Equipment",
-  Furniture: "Furnishings",
-  "Dorm essentials": "Personal effects",
-  Clothing: "Apparel",
-  Stationery: "Office supplies",
-  Other: "Unclassified",
+  Books: "Books & papers",
+  "Dorm essentials": "Personal items",
 };
-const STATES = { New: "Pristine", "Like new": "Intact", Used: "Worn" };
 const caseType = (category) => CASE_TYPES[category] ?? category;
-const stateOf = (condition) => STATES[condition] ?? condition;
+const stateOf = (condition) => condition;
 
 // A stable, official-looking file number derived from the listing id.
 function caseNumber(id) {
@@ -121,7 +114,7 @@ function fillArt(el, item) {
   if (!item.photo) return showIcon();
 
   const img = document.createElement("img");
-  img.alt = `Exhibit photo: ${item.title}`;
+  img.alt = `Photo of ${item.title}`;
   img.decoding = "async";
   el.classList.add("has-photo", "is-loading");
   img.addEventListener("load", () => el.classList.remove("is-loading"), { once: true });
@@ -160,11 +153,11 @@ function card(item) {
 
   fillArt(li.querySelector(".card-art"), item);
   li.querySelector(".card-title-text").textContent = item.title;
-  li.querySelector(".card-case").textContent = `Exhibit: ${item.exhibit || caseType(item.category)}`;
+  li.querySelector(".card-case").textContent = `Found property · ${caseType(item.category)}`;
   li.querySelector(".card-condition").textContent = stateOf(item.condition);
-  li.querySelector(".card-where").textContent = `Held at ${item.location}`;
+  li.querySelector(".card-where").textContent = `Collect from ${item.location}`;
   li.querySelector(".avatar").textContent = initials(item.seller);
-  li.querySelector(".card-seller").textContent = `Off. ${item.seller}`;
+  li.querySelector(".card-seller").textContent = `Logged by Off. ${item.seller}`;
   li.querySelector(".card-when").textContent = timeAgo(item.posted);
   li.querySelector(".price").textContent = main;
   if (original) li.querySelector(".price-original").textContent = original;
@@ -177,7 +170,7 @@ function visibleListings(all) {
     (item) =>
       (!state.category ||
         (state.category === SAVED ? item.saved : item.category === state.category)) &&
-      (!query || [item.title, item.exhibit, item.description, item.location].join(" ").toLowerCase().includes(query))
+      (!query || [item.title, item.description, item.location].join(" ").toLowerCase().includes(query))
   );
 
   if (state.sort !== "new") {
@@ -198,19 +191,19 @@ function render() {
   $("empty").hidden = shown.length > 0;
   if (!shown.length) {
     const saved = state.category === SAVED;
-    const where = saved ? " among your flagged files" : state.category ? ` under ${caseType(state.category)}` : "";
+    const where = saved ? " in your watchlist" : state.category ? ` in ${caseType(state.category)}` : "";
     $("empty-text").textContent = state.query.trim()
-      ? `No files match “${state.query.trim()}”${where}.`
+      ? `No items match “${state.query.trim()}”${where}.`
       : saved
-        ? "No flagged files yet. Open a case and tap Flag to keep it here."
-        : `No evidence logged${where} yet.`;
+        ? "Your watchlist is empty. Open an item and tap Watch to keep it here."
+        : `No property${where} for sale right now.`;
   }
 
   const available = all.filter((item) => item.status !== "sold").length;
   const filtered = state.category || state.query.trim();
   $("fact-count").textContent = filtered
-    ? `${shown.length} of ${all.length} files shown`
-    : `${available} open ${available === 1 ? "case" : "cases"}`;
+    ? `${shown.length} of ${all.length} items shown`
+    : `${available} ${available === 1 ? "item" : "items"} for sale`;
 
   for (const chip of chips.children) {
     chip.setAttribute("aria-checked", String(chip.dataset.value === state.category));
@@ -227,12 +220,12 @@ async function loadRates() {
     if (id !== rateRequest) return;
     state.rates = rates;
     const day = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short" }).format(new Date(date));
-    note.textContent = `Assessed values in ${state.display} · ${day} exchange rates`;
+    note.textContent = `Prices in ${state.display} · ${day} exchange rates`;
     note.classList.remove("is-error");
   } catch {
     if (id !== rateRequest) return;
     state.rates = null;
-    note.textContent = "Assessment service offline, showing declared values";
+    note.textContent = "Exchange rates unavailable, showing original prices";
     note.classList.add("is-error");
   }
   grid.removeAttribute("aria-busy");
@@ -244,12 +237,12 @@ async function loadRates() {
 
 function contactLink(item) {
   const first = item.seller.split(" ")[0];
-  const message = `Hi ${first}, I'd like to claim the "${item.title}" (case ${caseNumber(item.id)}). Is it still available?`;
+  const message = `Hi ${first}, I'd like to buy the "${item.title}" (ref ${caseNumber(item.id)}) from the lost property sale. Is it still available?`;
   if (item.contact.method === "whatsapp") {
     const digits = item.contact.value.replace(/\D/g, "");
     return { href: `https://wa.me/${digits}?text=${encodeURIComponent(message)}`, label: "Message the officer on WhatsApp" };
   }
-  const subject = encodeURIComponent(`Case ${caseNumber(item.id)}: ${item.title}`);
+  const subject = encodeURIComponent(`Lost property ref ${caseNumber(item.id)}: ${item.title}`);
   return { href: `mailto:${item.contact.value}?subject=${subject}&body=${encodeURIComponent(message)}`, label: "Email the officer" };
 }
 
@@ -265,23 +258,23 @@ function fillDetail(item) {
   $("bag-officer").textContent = `Off. ${item.seller}`;
   fillCustody(item, interested);
 
-  $("detail-case").textContent = `Case file ${caseNumber(item.id)}${item.exhibit ? ` · Exhibit: ${item.exhibit}` : ""}`;
+  $("detail-case").textContent = `Found property · Ref ${caseNumber(item.id)}`;
   $("detail-badges").innerHTML = `<span class="badge">${caseType(item.category)}</span><span class="badge">${stateOf(item.condition)}</span>${statusBadge(item.status)}`;
   $("detail-title").textContent = item.title;
   $("detail-price").textContent = main;
-  $("detail-original").textContent = original ? `${original} declared` : "";
-  $("detail-description").textContent = item.description || "No notes on file.";
+  $("detail-original").textContent = original ? `${original} listed` : "";
+  $("detail-description").textContent = item.description || "No notes from the property office.";
   $("detail-description").classList.toggle("is-empty", !item.description);
   $("detail-location").textContent = item.location;
   $("detail-avatar").textContent = initials(item.seller);
-  $("detail-seller").textContent = `Reporting officer: ${item.seller}${item.mine ? " (you)" : ""}`;
+  $("detail-seller").textContent = `Logged by Officer ${item.seller}${item.mine ? " (you)" : ""}`;
   const via = item.contact.method === "whatsapp" ? "WhatsApp" : "email";
   const contact = $("detail-contact");
   if (item.mine) contact.textContent = item.contact.value;
-  else if (interested) contact.textContent = `Clearance granted: reachable on ${via}`;
+  else if (interested) contact.textContent = `Contact released: reachable on ${via}`;
   else {
-    // Blacked out like a redacted file until clearance is requested.
-    contact.innerHTML = `<span class="redacted" aria-hidden="true">████████████████</span><span class="visually-hidden">Contact details redacted until you request clearance</span>`;
+    // Blacked out like a redacted form until the visitor asks to buy.
+    contact.innerHTML = `<span class="redacted" aria-hidden="true">████████████████</span><span class="visually-hidden">Officer contact details hidden until you request to buy</span>`;
   }
 
   const actions = $("detail-actions");
@@ -290,7 +283,7 @@ function fillDetail(item) {
   if (item.mine) {
     const label = document.createElement("p");
     label.className = "actions-label";
-    label.textContent = "Update case status";
+    label.textContent = "Update sale status";
     const group = document.createElement("div");
     group.className = "segmented";
     for (const [value, text] of Object.entries(STATUSES)) {
@@ -310,7 +303,7 @@ function fillDetail(item) {
     const edit = document.createElement("button");
     edit.type = "button";
     edit.className = "btn btn-ghost";
-    edit.textContent = "Amend record";
+    edit.textContent = "Edit listing";
     edit.addEventListener("click", () => {
       detailDialog.close();
       openPostForm(item);
@@ -318,12 +311,12 @@ function fillDetail(item) {
     const del = document.createElement("button");
     del.type = "button";
     del.className = "btn btn-ghost btn-danger";
-    del.textContent = "Destroy record";
+    del.textContent = "Remove listing";
     // Two taps instead of a confirm() popup: the first arms it, the second deletes.
     del.addEventListener("click", () => {
       if (!del.classList.contains("is-armed")) {
         del.classList.add("is-armed");
-        del.textContent = "Tap again to destroy";
+        del.textContent = "Tap again to remove";
         return;
       }
       removeListing(item.id);
@@ -339,7 +332,7 @@ function fillDetail(item) {
   saveButton.type = "button";
   saveButton.className = "btn btn-ghost btn-save";
   saveButton.setAttribute("aria-pressed", String(Boolean(item.saved)));
-  saveButton.innerHTML = `${FLAG}<span>${item.saved ? "Flagged" : "Flag"}</span>`;
+  saveButton.innerHTML = `${FLAG}<span>${item.saved ? "Watching" : "Watch"}</span>`;
   saveButton.addEventListener("click", () => {
     updateListing(item.id, { saved: !item.saved });
     fillDetail(getListing(item.id));
@@ -350,7 +343,7 @@ function fillDetail(item) {
   actions.append(row);
 
   if (item.status === "sold") {
-    row.innerHTML = `<button class="btn btn-primary btn-wide" type="button" disabled>Case closed</button>`;
+    row.innerHTML = `<button class="btn btn-primary btn-wide" type="button" disabled>Sold</button>`;
     row.append(saveButton);
     return;
   }
@@ -359,7 +352,7 @@ function fillDetail(item) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "btn btn-primary btn-wide";
-    button.textContent = "Request clearance";
+    button.textContent = "Request to buy";
     button.addEventListener("click", () => {
       state.interested.add(item.id);
       fillDetail(item);
@@ -368,7 +361,7 @@ function fillDetail(item) {
     if (item.status === "reserved") {
       const hint = document.createElement("p");
       hint.className = "actions-hint";
-      hint.textContent = "This case is under investigation, but you can still request clearance.";
+      hint.textContent = "Someone has this on hold, but you can still ask to be next in line.";
       actions.append(hint);
     }
     return;
@@ -383,24 +376,24 @@ function fillDetail(item) {
   link.textContent = label;
   const hint = document.createElement("p");
   hint.className = "actions-hint";
-  hint.textContent = `Clearance granted. Collect it from ${item.location} and ask for Officer ${item.seller.split(" ").at(-1)}.`;
+  hint.textContent = `Request sent. Collect it from ${item.location} and ask for Officer ${item.seller.split(" ").at(-1)}.`;
   row.append(link, saveButton);
   actions.append(hint);
 }
 
-// The listing's status history, told as an evidence chain of custody.
+// The listing's status history, told as the item's trail through the property room.
 function fillCustody(item, interested) {
   const sold = item.status === "sold";
-  const steps = [{ label: "Logged", note: `${timeAgo(item.posted)} by Off. ${item.seller}`, done: true }];
+  const steps = [{ label: "Found & logged", note: `${timeAgo(item.posted)} by Officer ${item.seller}`, done: true }];
   if (item.status === "reserved") {
-    steps.push({ label: "Under investigation", note: "Another claimant has a hold on it", done: true });
+    steps.push({ label: "On hold", note: "Another buyer has reserved it", done: true });
   }
   steps.push({
-    label: "Clearance requested",
-    note: sold ? "Granted to a claimant" : interested ? "By you, during this visit" : item.mine ? "Waiting for a claimant" : "Not yet requested",
+    label: "Purchase requested",
+    note: sold ? "A buyer came forward" : interested ? "By you, during this visit" : item.mine ? "Waiting for a buyer" : "No requests yet",
     done: sold || interested,
   });
-  steps.push({ label: "Case closed", note: sold ? "Item released from the locker" : "Still held", done: sold });
+  steps.push({ label: "Released to buyer", note: sold ? "Sold and collected" : "Still in the property room", done: sold });
 
   $("detail-custody").replaceChildren(
     ...steps.map(({ label, note, done }) => {
@@ -495,9 +488,9 @@ for (const select of [picker, fields.currency]) {
 
 function buildChips() {
   const options = [
-    { value: "", label: "All cases" },
+    { value: "", label: "All items" },
     ...CATEGORIES.map((c) => ({ value: c, label: caseType(c) })),
-    { value: SAVED, label: "Flagged" },
+    { value: SAVED, label: "Watchlist" },
   ];
   chips.replaceChildren(
     ...options.map(({ value, label }) => {
@@ -535,7 +528,7 @@ function buildFormOptions() {
 }
 
 function contactProblem(method, value) {
-  if (!value) return "Add a secure line so claimants can reach you.";
+  if (!value) return "Add a way for buyers to reach you.";
   if (method === "whatsapp" && value.replace(/\D/g, "").length < 8) return "Enter a WhatsApp number with country code.";
   if (method === "email" && !/^\S+@\S+\.\S+$/.test(value)) return "Enter a valid email address.";
   return "";
@@ -556,12 +549,12 @@ form.addEventListener("submit", (event) => {
   const contactValue = fields.contactValue.value.trim();
 
   let problem = "";
-  if (!title) problem = "Give the case a name.";
-  else if (fields.price.value === "" || !Number.isFinite(price) || price < 0) problem = "Enter a declared value of 0 or more.";
-  else if (!fields.condition.value) problem = "Record the item's state.";
-  else if (!fields.category.value) problem = "Pick a case type.";
-  else if (!location) problem = "Say where the item is held.";
-  else if (!seller) problem = "Add the reporting officer's name.";
+  if (!title) problem = "Name the item.";
+  else if (fields.price.value === "" || !Number.isFinite(price) || price < 0) problem = "Enter a price of 0 or more.";
+  else if (!fields.condition.value) problem = "Pick the item's condition.";
+  else if (!fields.category.value) problem = "Pick a category.";
+  else if (!location) problem = "Say where buyers collect it.";
+  else if (!seller) problem = "Add the logging officer's name.";
   else problem = contactProblem(fields.contactMethod.value, contactValue);
 
   formError.textContent = problem;
@@ -583,7 +576,7 @@ form.addEventListener("submit", (event) => {
   if (state.editingId) {
     const id = state.editingId;
     if (!updateListing(id, data)) {
-      formError.textContent = "Couldn't file that. Your browser's storage is full, so try a smaller photo or none.";
+      formError.textContent = "Couldn't save that. Your browser's storage is full, so try a smaller photo or none.";
       return;
     }
     postDialog.close();
@@ -594,7 +587,7 @@ form.addEventListener("submit", (event) => {
 
   const item = addListing(data);
   if (!item) {
-    formError.textContent = "Couldn't file that. Your browser's storage is full, so try a smaller photo or none.";
+    formError.textContent = "Couldn't save that. Your browser's storage is full, so try a smaller photo or none.";
     return;
   }
   postDialog.close();
@@ -636,8 +629,8 @@ function openPostForm(item) {
   form.reset();
   formError.textContent = "";
   state.editingId = item?.id ?? null;
-  $("post-title").textContent = item ? "Amend record" : "Log new evidence";
-  $("post-submit").textContent = item ? "Save record" : "File it";
+  $("post-title").textContent = item ? "Edit listing" : "Log found property";
+  $("post-submit").textContent = item ? "Save changes" : "List for sale";
 
   if (item) {
     fields.title.value = item.title;

@@ -2,7 +2,7 @@
 
 ## Live site: [code-and-chaos.vercel.app](https://code-and-chaos.vercel.app/)
 
-Buy and sell things nearby, reskinned in round 4 as a police evidence locker. Log an item, search the case files, see valuations in your own currency, and request clearance to contact the reporting officer.
+Buy and sell things nearby, reskinned in round 4 as a police lost property sale. Browse unclaimed items, filter and search, see prices in your own currency, and request to buy.
 
 ## Features
 
@@ -19,4 +19,4 @@ Plain HTML, CSS and JavaScript. No build step, no dependencies. To run locally: 
 1. **Base build:** post, browse, filter and search listings
 2. **Currency:** live conversion with the Frankfurter API
 3. **No new libraries:** photos, saved listings, edit/delete, contact reveal, all in vanilla JS
-4. **Reskin:** now the AB Precinct Evidence Locker. Listings are case files in manila folders, each opening on a sealed evidence bag with a printed label and a chain-of-custody timeline (Logged → Clearance requested → Case closed). Statuses are rubber stamps, and seller contact stays redacted until you request clearance. Same features underneath: currency conversion now reads as assessed values, and every category is a themed case type.
+4. **Reskin:** now the AB Precinct Lost Property Sale, where the police property office sells unclaimed found items. Listings are manila folders with reference tabs, each opening on a sealed property bag with a printed label and a property history (Found & logged → Purchase requested → Released to buyer). Statuses are rubber stamps ("On hold", "Sold") and the officer's contact stays redacted until you request to buy. Same features underneath.
