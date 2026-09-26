@@ -106,6 +106,19 @@
         <input name="title" required maxlength="80" autocomplete="off" placeholder="e.g. Casio fx-991EX calculator">
       </label>
 
+      <div class="field">
+        <span>Photo <em>optional</em></span>
+        <label class="photo-drop" id="photo-drop">
+          <input type="file" name="photo" accept="image/*" class="visually-hidden">
+          <img id="photo-preview" alt="" hidden>
+          <span class="photo-empty" id="photo-empty">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.25"/></svg>
+            <span>Add a photo</span>
+          </span>
+        </label>
+        <button class="link-btn" type="button" id="photo-remove" hidden>Remove photo</button>
+      </div>
+
       <label class="field">
         <span>Description <em>optional</em></span>
         <textarea name="description" rows="3" maxlength="500" placeholder="Condition details, what's included, why you're selling"></textarea>
@@ -156,7 +169,7 @@
 
       <div class="sheet-actions">
         <button class="btn btn-ghost" type="button" data-close>Cancel</button>
-        <button class="btn btn-primary" type="submit">Post listing</button>
+        <button class="btn btn-primary" type="submit" id="post-submit">Post listing</button>
       </div>
     </form>
   </dialog>

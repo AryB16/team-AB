@@ -1,6 +1,7 @@
-import { allListings, addListing, getListing, updateListing, CATEGORIES, CONDITIONS, STATUSES } from "./store.js";
+import { allListings, addListing, getListing, updateListing, removeListing, CATEGORIES, CONDITIONS, STATUSES } from "./store.js";
 import { ratesFor, currencies, formatMoney } from "./money.js";
 import { categoryIcon } from "./icons.js";
+import { shrinkPhoto } from "./photo.js";
 
 const $ = (id) => document.getElementById(id);
 const grid = $("listings");
@@ -16,6 +17,8 @@ const fields = form.elements;
 const formError = $("form-error");
 
 const STORAGE_KEY = "display-currency";
+const SAVED = "__saved";
+const HEART = `<svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>`;
 const FALLBACK_CODES = ["AED", "EUR", "GBP", "INR", "USD"];
 
 const state = {
@@ -26,6 +29,8 @@ const state = {
   sort: "new",
   justPosted: null,
   openId: null,
+  editingId: null,
+  photo: null,
 };
 
 function readPref() {
@@ -81,6 +86,19 @@ function prices(item) {
   return { main: formatMoney(amount, state.display), original: formatMoney(item.price, item.currency) };
 }
 
+function fillArt(el, item) {
+  if (item.photo) {
+    const img = document.createElement("img");
+    img.src = item.photo;
+    img.alt = "";
+    el.replaceChildren(img);
+    el.classList.add("has-photo");
+  } else {
+    el.innerHTML = categoryIcon(item.icon ?? item.category);
+    el.classList.remove("has-photo");
+  }
+}
+
 function statusBadge(status) {
   if (status === "available") return "";
   return `<span class="badge badge-${status}">${STATUSES[status]}</span>`;
@@ -92,9 +110,9 @@ function card(item) {
 
   li.innerHTML = `
     <button type="button" class="card" data-id="${item.id}" data-category="${item.category}">
-      <span class="card-art">${categoryIcon(item.icon ?? item.category)}</span>
+      <span class="card-art"></span>
       <span class="card-main">
-        <span class="card-title"><span class="card-title-text"></span>${statusBadge(item.status)}</span>
+        <span class="card-title"><span class="card-title-text"></span>${item.saved ? HEART : ""}${statusBadge(item.status)}</span>
         <span class="card-meta"><span class="avatar avatar-sm" aria-hidden="true"></span><span class="card-seller"></span><span class="card-when"></span></span>
       </span>
       <span class="card-price">
@@ -107,6 +125,7 @@ function card(item) {
   if (item.id === state.justPosted) button.classList.add("is-new");
   if (item.status === "sold") button.classList.add("is-sold");
 
+  fillArt(li.querySelector(".card-art"), item);
   li.querySelector(".card-title-text").textContent = item.title;
   li.querySelector(".avatar").textContent = initials(item.seller);
   li.querySelector(".card-seller").textContent = item.seller;
@@ -120,7 +139,8 @@ function visibleListings() {
   const query = state.query.trim().toLowerCase();
   const shown = allListings().filter(
     (item) =>
-      (!state.category || item.category === state.category) &&
+      (!state.category ||
+        (state.category === SAVED ? item.saved : item.category === state.category)) &&
       (!query || [item.title, item.description, item.location].join(" ").toLowerCase().includes(query))
   );
 
@@ -139,10 +159,13 @@ function render() {
 
   $("empty").hidden = shown.length > 0;
   if (!shown.length) {
-    const where = state.category ? ` in ${state.category}` : "";
+    const saved = state.category === SAVED;
+    const where = saved ? " in your saved listings" : state.category ? ` in ${state.category}` : "";
     $("empty-text").textContent = state.query.trim()
       ? `No listings match “${state.query.trim()}”${where}.`
-      : `Nothing${where} yet. Be the first to post one.`;
+      : saved
+        ? "Nothing saved yet. Open a listing and tap Save to keep it here."
+        : `Nothing${where} yet. Be the first to post one.`;
   }
 
   const available = allListings().filter((item) => item.status !== "sold").length;
@@ -196,7 +219,7 @@ function fillDetail(item) {
 
   const art = $("detail-art");
   art.dataset.category = item.category;
-  art.innerHTML = categoryIcon(item.icon ?? item.category);
+  fillArt(art, item);
 
   $("detail-badges").innerHTML = `<span class="badge">${item.category}</span><span class="badge">${item.condition}</span>${statusBadge(item.status)}`;
   $("detail-title").textContent = item.title;
@@ -233,12 +256,53 @@ function fillDetail(item) {
       });
       group.append(button);
     }
-    actions.append(label, group);
+    const manage = document.createElement("div");
+    manage.className = "detail-manage";
+    const edit = document.createElement("button");
+    edit.type = "button";
+    edit.className = "btn btn-ghost";
+    edit.textContent = "Edit listing";
+    edit.addEventListener("click", () => {
+      detailDialog.close();
+      openPostForm(item);
+    });
+    const del = document.createElement("button");
+    del.type = "button";
+    del.className = "btn btn-ghost btn-danger";
+    del.textContent = "Delete";
+    // Two taps instead of a confirm() popup: the first arms it, the second deletes.
+    del.addEventListener("click", () => {
+      if (!del.classList.contains("is-armed")) {
+        del.classList.add("is-armed");
+        del.textContent = "Tap again to delete";
+        return;
+      }
+      removeListing(item.id);
+      detailDialog.close();
+      render();
+    });
+    manage.append(edit, del);
+    actions.append(label, group, manage);
     return;
   }
 
+  const saveButton = document.createElement("button");
+  saveButton.type = "button";
+  saveButton.className = "btn btn-ghost btn-save";
+  saveButton.setAttribute("aria-pressed", String(Boolean(item.saved)));
+  saveButton.innerHTML = `${HEART}<span>${item.saved ? "Saved" : "Save"}</span>`;
+  saveButton.addEventListener("click", () => {
+    updateListing(item.id, { saved: !item.saved });
+    fillDetail(getListing(item.id));
+    render();
+  });
+  const row = document.createElement("div");
+  row.className = "detail-row";
+  actions.append(row);
+
   if (item.status === "sold") {
-    actions.innerHTML = `<button class="btn btn-primary btn-wide" type="button" disabled>Sold</button>`;
+    row.innerHTML = `<button class="btn btn-primary btn-wide" type="button" disabled>Sold</button>`;
+    row.append(saveButton);
     return;
   }
 
@@ -251,7 +315,7 @@ function fillDetail(item) {
       updateListing(item.id, { interested: true });
       fillDetail(getListing(item.id));
     });
-    actions.append(button);
+    row.append(button, saveButton);
     if (item.status === "reserved") {
       const hint = document.createElement("p");
       hint.className = "actions-hint";
@@ -271,7 +335,8 @@ function fillDetail(item) {
   const hint = document.createElement("p");
   hint.className = "actions-hint";
   hint.textContent = `You've shown interest. Arrange the pickup at ${item.location} with ${item.seller.split(" ")[0]}.`;
-  actions.append(link, hint);
+  row.append(link, saveButton);
+  actions.append(hint);
 }
 
 function openDetail(id) {
@@ -336,7 +401,11 @@ for (const select of [picker, fields.currency]) {
 }
 
 function buildChips() {
-  const options = [{ value: "", label: "All" }, ...CATEGORIES.map((c) => ({ value: c, label: c }))];
+  const options = [
+    { value: "", label: "All" },
+    ...CATEGORIES.map((c) => ({ value: c, label: c })),
+    { value: SAVED, label: "Saved" },
+  ];
   chips.replaceChildren(
     ...options.map(({ value, label }) => {
       const chip = document.createElement("button");
@@ -405,7 +474,7 @@ form.addEventListener("submit", (event) => {
   formError.textContent = problem;
   if (problem) return;
 
-  const item = addListing({
+  const data = {
     title,
     description: fields.description.value.trim(),
     price,
@@ -415,8 +484,26 @@ form.addEventListener("submit", (event) => {
     location,
     seller,
     contact: { method: fields.contactMethod.value, value: contactValue },
-  });
-  form.reset();
+    photo: state.photo,
+  };
+
+  if (state.editingId) {
+    const id = state.editingId;
+    if (!updateListing(id, data)) {
+      formError.textContent = "Couldn't save that. Your browser's storage is full, so try a smaller photo or none.";
+      return;
+    }
+    postDialog.close();
+    render();
+    openDetail(id);
+    return;
+  }
+
+  const item = addListing(data);
+  if (!item) {
+    formError.textContent = "Couldn't save that. Your browser's storage is full, so try a smaller photo or none.";
+    return;
+  }
   postDialog.close();
 
   // Clear filters so the new listing is guaranteed to be visible at the top.
@@ -427,17 +514,62 @@ form.addEventListener("submit", (event) => {
   grid.firstElementChild?.scrollIntoView({ behavior: "smooth", block: "center" });
 });
 
+function showPhoto(dataUrl) {
+  state.photo = dataUrl;
+  const preview = $("photo-preview");
+  preview.hidden = !dataUrl;
+  if (dataUrl) preview.src = dataUrl;
+  else preview.removeAttribute("src");
+  $("photo-empty").hidden = Boolean(dataUrl);
+  $("photo-remove").hidden = !dataUrl;
+}
+
+fields.photo.addEventListener("change", async () => {
+  const file = fields.photo.files[0];
+  fields.photo.value = "";
+  if (!file) return;
+  try {
+    showPhoto(await shrinkPhoto(file));
+  } catch {
+    formError.textContent = "That file couldn't be read as an image.";
+  }
+});
+
+$("photo-remove").addEventListener("click", () => showPhoto(null));
+
+function openPostForm(item) {
+  form.reset();
+  formError.textContent = "";
+  state.editingId = item?.id ?? null;
+  $("post-title").textContent = item ? "Edit listing" : "Post a listing";
+  $("post-submit").textContent = item ? "Save changes" : "Post listing";
+
+  if (item) {
+    fields.title.value = item.title;
+    fields.description.value = item.description ?? "";
+    fields.price.value = item.price;
+    fields.currency.value = item.currency;
+    fields.condition.value = item.condition;
+    fields.category.value = item.category;
+    fields.location.value = item.location;
+    fields.seller.value = item.seller;
+    fields.contactMethod.value = item.contact.method;
+    fields.contactValue.value = item.contact.value;
+  } else {
+    fields.currency.value = state.display;
+  }
+  fields.contactMethod.dispatchEvent(new Event("change"));
+  compact(fields.currency);
+  showPhoto(item?.photo ?? null);
+  postDialog.showModal();
+  fields.title.focus();
+}
+
 form.addEventListener("input", () => {
   formError.textContent = "";
 });
 
-$("open-post").addEventListener("click", () => {
-  formError.textContent = "";
-  fields.currency.value = state.display;
-  compact(fields.currency);
-  postDialog.showModal();
-  fields.title.focus();
-});
+$("open-post").addEventListener("click", () => openPostForm(null));
 
 for (const dialog of [postDialog, detailDialog]) {
   dialog.addEventListener("click", (event) => {

@@ -989,6 +989,151 @@ button {
   gap: 0.5rem;
 }
 
+/* Photos */
+
+.card-art,
+.detail-art {
+  overflow: hidden;
+}
+
+.has-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.detail-art.has-photo {
+  height: 15rem;
+  background: var(--ink);
+}
+
+.photo-drop {
+  display: grid;
+  place-items: center;
+  height: 7.5rem;
+  overflow: hidden;
+  border: 1px dashed var(--line-strong);
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--ink-2);
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 160ms var(--ease);
+}
+
+.photo-drop:hover {
+  border-color: var(--ink-2);
+}
+
+.photo-drop:has(input:focus-visible) {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.photo-drop img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.photo-empty[hidden] {
+  display: none;
+}
+
+.photo-empty svg {
+  width: 1.6rem;
+  height: 1.6rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.link-btn {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-2);
+  font-size: 0.8125rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+/* Saved listings */
+
+.heart {
+  flex-shrink: 0;
+  width: 0.95rem;
+  height: 0.95rem;
+  fill: #b23a3a;
+  stroke: #b23a3a;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.detail-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.detail-row .btn-wide {
+  flex: 1;
+  width: auto;
+}
+
+.btn-save {
+  gap: 0.4rem;
+  height: 2.9rem;
+  padding: 0 1.1rem;
+}
+
+.btn-save .heart {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: none;
+  stroke: currentColor;
+}
+
+.btn-save[aria-pressed="true"] .heart {
+  fill: #b23a3a;
+  stroke: #b23a3a;
+}
+
+.chip[data-value="__saved"] {
+  margin-left: 0.4rem;
+}
+
+/* Managing your own listing */
+
+.detail-manage {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.detail-manage .btn {
+  flex: 1;
+}
+
+.btn-danger {
+  color: var(--error);
+}
+
+.btn-danger.is-armed {
+  background: var(--error);
+  border-color: var(--error);
+  color: var(--sheet);
+}
+
 /* Small screens */
 
 @media (max-width: 44rem) {
