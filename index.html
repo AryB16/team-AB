@@ -4,57 +4,105 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Noticeboard</title>
+  <meta name="description" content="Post things you want to sell, browse what's up, and see every price in your own currency.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="top">
-    <div class="wrap top-row">
-      <a class="brand" href="./">Noticeboard</a>
-      <label class="currency">
-        <span>Show prices in</span>
-        <select id="currency" aria-describedby="rate-note"></select>
-      </label>
+  <header class="bar">
+    <div class="wrap bar-row">
+      <a class="wordmark" href="./">Noticeboard</a>
+      <div class="bar-actions">
+        <label class="currency-pill">
+          <span class="visually-hidden">Show prices in</span>
+          <select id="currency" aria-describedby="rate-note"></select>
+        </label>
+        <button class="btn btn-primary" id="open-post" type="button">Post a listing</button>
+      </div>
     </div>
   </header>
 
-  <div class="wrap layout">
-    <aside class="post">
-      <h2 class="post-heading">Post a listing</h2>
-      <form id="post-form" novalidate>
-        <label class="field">
-          <span>Title</span>
-          <input name="title" required maxlength="80" autocomplete="off" placeholder="What are you selling?">
-        </label>
-        <div class="field">
-          <label for="price">Price</label>
-          <div class="price-input">
-            <input id="price" name="price" type="number" inputmode="decimal" min="0" step="0.01" required>
-            <select name="currency" aria-label="Price currency"></select>
-          </div>
-        </div>
-        <label class="field">
-          <span>Category</span>
-          <select name="category" required></select>
-        </label>
-        <p class="form-error" id="form-error" role="alert"></p>
-        <button type="submit">Post listing</button>
-      </form>
-    </aside>
+  <main>
+    <section class="hero wrap">
+      <h1>Second‑hand, from people&nbsp;nearby.</h1>
+      <p class="lede">Post what you no longer need, browse what others have put up, and read every price in the currency you think in.</p>
+      <dl class="facts">
+        <div><dt>Listings</dt><dd id="fact-count">—</dd></div>
+        <div><dt>Categories</dt><dd id="fact-categories">—</dd></div>
+        <div><dt>Prices shown in</dt><dd id="fact-currency">—</dd></div>
+      </dl>
+    </section>
 
-    <main>
-      <div class="toolbar">
-        <input id="search" type="search" placeholder="Search titles" aria-label="Search titles">
-        <select id="category-filter" aria-label="Filter by category"></select>
+    <section class="browse wrap" aria-label="Listings">
+      <div class="controls">
+        <div class="chips" id="chips" role="radiogroup" aria-label="Category"></div>
+        <div class="controls-right">
+          <label class="search">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
+            <input id="search" type="search" placeholder="Search titles" aria-label="Search titles">
+          </label>
+          <label class="sort">
+            <span class="visually-hidden">Sort</span>
+            <select id="sort">
+              <option value="new">Newest first</option>
+              <option value="low">Price: low to high</option>
+              <option value="high">Price: high to low</option>
+            </select>
+          </label>
+        </div>
       </div>
+
       <p id="rate-note" class="rate-note" aria-live="polite"></p>
-      <p id="count" class="count"></p>
-      <ul id="listings" class="listings"></ul>
-      <p id="empty" class="empty" hidden>No listings match that. Try another category or clear the search.</p>
-    </main>
-  </div>
+
+      <ul id="listings" class="grid"></ul>
+      <div id="empty" class="empty" hidden>
+        <p class="empty-title">Nothing matches that.</p>
+        <p>Try a different category, clear the search, or be the first to post one.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot wrap">
+    <p>Exchange rates from <a href="https://frankfurter.dev" rel="noopener">Frankfurter</a>. Listings are stored in your browser.</p>
+  </footer>
+
+  <dialog id="post-dialog" class="sheet" aria-labelledby="post-title">
+    <form id="post-form" method="dialog" novalidate>
+      <div class="sheet-head">
+        <h2 id="post-title">Post a listing</h2>
+        <button class="icon-btn" type="button" id="close-post" aria-label="Close">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg>
+        </button>
+      </div>
+
+      <label class="field">
+        <span>Title</span>
+        <input name="title" required maxlength="80" autocomplete="off" placeholder="e.g. Casio fx-991EX calculator">
+      </label>
+
+      <div class="field">
+        <label for="price">Price</label>
+        <div class="price-input">
+          <select name="currency" aria-label="Price currency"></select>
+          <input id="price" name="price" type="number" inputmode="decimal" min="0" step="0.01" required placeholder="0.00">
+        </div>
+      </div>
+
+      <fieldset class="field">
+        <legend>Category</legend>
+        <div class="category-options" id="category-options"></div>
+      </fieldset>
+
+      <p class="form-error" id="form-error" role="alert"></p>
+
+      <div class="sheet-actions">
+        <button class="btn btn-ghost" type="button" id="cancel-post">Cancel</button>
+        <button class="btn btn-primary" type="submit">Post listing</button>
+      </div>
+    </form>
+  </dialog>
 
   <script type="module" src="js/app.js"></script>
 </body>

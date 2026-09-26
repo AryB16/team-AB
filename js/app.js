@@ -1,15 +1,18 @@
 import { allListings, addListing, CATEGORIES } from "./store.js";
 import { ratesFor, currencies, formatMoney } from "./money.js";
+import { categoryIcon } from "./icons.js";
 
 const $ = (id) => document.getElementById(id);
-const list = $("listings");
+const grid = $("listings");
 const picker = $("currency");
 const note = $("rate-note");
 const search = $("search");
-const categoryFilter = $("category-filter");
+const sort = $("sort");
+const chips = $("chips");
+const dialog = $("post-dialog");
 const form = $("post-form");
-const formError = $("form-error");
 const fields = form.elements;
+const formError = $("form-error");
 
 const STORAGE_KEY = "display-currency";
 const FALLBACK_CODES = ["AED", "EUR", "GBP", "INR", "USD"];
@@ -19,6 +22,8 @@ const state = {
   rates: null,
   query: "",
   category: "",
+  sort: "new",
+  justPosted: null,
 };
 
 function readPref() {
@@ -37,40 +42,50 @@ function writePref(code) {
 
 const dateFmt = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short" });
 
-function row(item) {
-  const li = document.createElement("li");
-  li.className = "listing";
-
-  // Rates are fetched with the display currency as base, so one request
-  // covers every listing: price in display = price / rate(display → source).
+// Rates are fetched with the display currency as base, so one request covers
+// every listing: price in display = price / rate(display → source).
+function inDisplay(item) {
+  if (item.currency === state.display) return item.price;
   const rate = state.rates?.[item.currency];
-  const converted = rate && item.currency !== state.display;
+  return rate ? item.price / rate : null;
+}
+
+function card(item) {
+  const li = document.createElement("li");
+  li.className = "card";
+  li.dataset.category = item.category;
+  if (item.id === state.justPosted) li.classList.add("is-new");
+
+  const amount = inDisplay(item);
+  const converted = amount != null && item.currency !== state.display;
 
   li.innerHTML = `
-    <div class="listing-main">
-      <h3 class="listing-title"></h3>
-      <p class="listing-meta"><span class="tag"></span> <span class="posted"></span></p>
-    </div>
-    <div class="listing-price">
-      <span class="price"></span>
-      ${converted ? `<span class="price-original"></span>` : ""}
+    <div class="card-art">${categoryIcon(item.category)}</div>
+    <div class="card-body">
+      <p class="card-meta"><span class="card-category"></span><span class="card-date"></span></p>
+      <h3 class="card-title"></h3>
+      <p class="card-price">
+        <span class="price"></span>
+        ${converted ? `<span class="price-original"></span>` : ""}
+      </p>
     </div>`;
 
-  li.querySelector(".listing-title").textContent = item.title;
-  li.querySelector(".tag").textContent = item.category;
-  li.querySelector(".posted").textContent = dateFmt.format(new Date(item.posted));
+  li.querySelector(".card-category").textContent = item.category;
+  li.querySelector(".card-date").textContent = dateFmt.format(new Date(item.posted));
+  li.querySelector(".card-title").textContent = item.title;
 
   const price = li.querySelector(".price");
   if (converted) {
-    price.textContent = `≈ ${formatMoney(item.price / rate, state.display)}`;
-    li.querySelector(".price-original").textContent = formatMoney(item.price, item.currency);
+    price.textContent = formatMoney(amount, state.display);
+    price.title = "Converted at today's reference rate";
+    li.querySelector(".price-original").textContent = `${formatMoney(item.price, item.currency)} listed`;
   } else {
     price.textContent = formatMoney(item.price, item.currency);
   }
   return li;
 }
 
-function renderList() {
+function visibleListings() {
   const query = state.query.trim().toLowerCase();
   const shown = allListings().filter(
     (item) =>
@@ -78,30 +93,50 @@ function renderList() {
       (!query || item.title.toLowerCase().includes(query))
   );
 
-  list.replaceChildren(...shown.map(row));
+  if (state.sort !== "new") {
+    // Without rates, mixed currencies can't be compared, so fall back to raw numbers.
+    const value = (item) => inDisplay(item) ?? item.price;
+    const dir = state.sort === "low" ? 1 : -1;
+    shown.sort((a, b) => dir * (value(a) - value(b)));
+  }
+  return shown;
+}
+
+function render() {
+  const shown = visibleListings();
+  grid.replaceChildren(...shown.map(card));
   $("empty").hidden = shown.length > 0;
-  $("count").textContent = `${shown.length} ${shown.length === 1 ? "listing" : "listings"}`;
+
+  const all = allListings();
+  $("fact-count").textContent = all.length;
+  $("fact-categories").textContent = new Set(all.map((item) => item.category)).size;
+  $("fact-currency").textContent = state.display;
+
+  for (const chip of chips.children) {
+    chip.setAttribute("aria-checked", String(chip.dataset.value === state.category));
+  }
 }
 
 let rateRequest = 0;
 
 async function loadRates() {
   const id = ++rateRequest;
-  list.setAttribute("aria-busy", "true");
+  grid.setAttribute("aria-busy", "true");
   try {
     const { date, rates } = await ratesFor(state.display);
     if (id !== rateRequest) return;
     state.rates = rates;
-    note.textContent = `Converted at ${date} reference rates via Frankfurter. Sellers set prices in their own currency.`;
+    const day = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long" }).format(new Date(date));
+    note.textContent = `Prices converted to ${state.display} at the ${day} reference rate. Sellers' original prices are shown underneath.`;
     note.classList.remove("is-error");
   } catch {
     if (id !== rateRequest) return;
     state.rates = null;
-    note.textContent = "Couldn't reach the exchange-rate service, so prices are shown in the seller's currency.";
+    note.textContent = "The exchange-rate service isn't responding, so prices are shown in each seller's own currency.";
     note.classList.add("is-error");
   }
-  list.removeAttribute("aria-busy");
-  renderList();
+  grid.removeAttribute("aria-busy");
+  render();
 }
 
 function fillSelect(select, options, selected) {
@@ -115,45 +150,96 @@ function fillSelect(select, options, selected) {
 }
 
 function fillCurrencySelects(codes) {
-  const options = codes.map(({ code, name }) => ({ value: code, label: name ? `${code} — ${name}` : code }));
-  fillSelect(picker, options, state.display);
+  fillSelect(picker, codes.map(({ code, name }) => ({ value: code, label: name ? `${code} · ${name}` : code })), state.display);
   fillSelect(fields.currency, codes.map(({ code }) => ({ value: code, label: code })), fields.currency.value || state.display);
+}
+
+function buildChips() {
+  const options = [{ value: "", label: "All" }, ...CATEGORIES.map((c) => ({ value: c, label: c }))];
+  chips.replaceChildren(
+    ...options.map(({ value, label }) => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip";
+      chip.setAttribute("role", "radio");
+      chip.dataset.value = value;
+      chip.textContent = label;
+      chip.addEventListener("click", () => {
+        state.category = value;
+        render();
+      });
+      return chip;
+    })
+  );
+}
+
+function buildCategoryOptions() {
+  $("category-options").replaceChildren(
+    ...CATEGORIES.map((c) => {
+      const label = document.createElement("label");
+      label.className = "category-option";
+      label.innerHTML = `<input type="radio" name="category" value="${c}">${categoryIcon(c)}<span>${c}</span>`;
+      return label;
+    })
+  );
+}
+
+function openPost() {
+  formError.textContent = "";
+  fields.currency.value = state.display;
+  dialog.showModal();
+  fields.title.focus();
+}
+
+function closePost() {
+  dialog.close();
 }
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   const title = fields.title.value.trim();
   const price = Number(fields.price.value);
+  const category = fields.category.value;
 
   let problem = "";
   if (!title) problem = "Give the listing a title.";
   else if (fields.price.value === "" || !Number.isFinite(price) || price < 0) problem = "Enter a price of 0 or more.";
-  else if (!fields.category.value) problem = "Pick a category.";
+  else if (!category) problem = "Pick a category.";
 
   formError.textContent = problem;
   if (problem) return;
 
-  addListing({ title, price, currency: fields.currency.value, category: fields.category.value });
-  fields.title.value = "";
-  fields.price.value = "";
-  fields.title.focus();
+  const item = addListing({ title, price, currency: fields.currency.value, category });
+  form.reset();
+  closePost();
 
-  // Show the new listing even if the current filter would hide it.
-  state.category = "";
-  state.query = "";
-  categoryFilter.value = "";
+  // Clear filters so the new listing is guaranteed to be visible at the top.
+  Object.assign(state, { category: "", query: "", sort: "new", justPosted: item.id });
   search.value = "";
-  renderList();
+  sort.value = "new";
+  render();
+  grid.firstElementChild?.scrollIntoView({ behavior: "smooth", block: "center" });
+});
+
+form.addEventListener("input", () => {
+  formError.textContent = "";
+});
+
+$("open-post").addEventListener("click", openPost);
+$("close-post").addEventListener("click", closePost);
+$("cancel-post").addEventListener("click", closePost);
+dialog.addEventListener("click", (event) => {
+  if (event.target === dialog) closePost();
 });
 
 search.addEventListener("input", () => {
   state.query = search.value;
-  renderList();
+  render();
 });
 
-categoryFilter.addEventListener("change", () => {
-  state.category = categoryFilter.value;
-  renderList();
+sort.addEventListener("change", () => {
+  state.sort = sort.value;
+  render();
 });
 
 picker.addEventListener("change", () => {
@@ -163,19 +249,10 @@ picker.addEventListener("change", () => {
 });
 
 async function init() {
-  fillSelect(
-    categoryFilter,
-    [{ value: "", label: "All categories" }, ...CATEGORIES.map((c) => ({ value: c, label: c }))],
-    ""
-  );
-  fillSelect(
-    fields.category,
-    [{ value: "", label: "Choose…" }, ...CATEGORIES.map((c) => ({ value: c, label: c }))],
-    ""
-  );
+  buildChips();
+  buildCategoryOptions();
   fillCurrencySelects(FALLBACK_CODES.map((code) => ({ code })));
-
-  renderList();
+  render();
   loadRates();
 
   try {
