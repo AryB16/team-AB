@@ -19,7 +19,9 @@ const formError = $("form-error");
 const STORAGE_KEY = "display-currency";
 const SAVED = "__saved";
 const HEART = `<svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>`;
-const FALLBACK_CODES = ["AED", "EUR", "GBP", "INR", "USD"];
+// The currencies most visitors here actually use, pinned above the full list.
+const POPULAR = ["AED", "INR", "USD", "EUR", "GBP", "PKR"];
+const FALLBACK_CODES = ["AED", "INR", "USD", "EUR", "GBP"];
 
 const state = {
   display: readPref() || "AED",
@@ -119,6 +121,7 @@ function card(item) {
       <span class="card-art"></span>
       <span class="card-main">
         <span class="card-title"><span class="card-title-text"></span>${item.saved ? HEART : ""}${statusBadge(item.status)}</span>
+        <span class="card-facts"><span class="card-condition"></span><span class="card-where"></span></span>
         <span class="card-meta"><span class="avatar avatar-sm" aria-hidden="true"></span><span class="card-seller"></span><span class="card-when"></span></span>
       </span>
       <span class="card-price">
@@ -133,6 +136,8 @@ function card(item) {
 
   fillArt(li.querySelector(".card-art"), item);
   li.querySelector(".card-title-text").textContent = item.title;
+  li.querySelector(".card-condition").textContent = item.condition;
+  li.querySelector(".card-where").textContent = item.location;
   li.querySelector(".avatar").textContent = initials(item.seller);
   li.querySelector(".card-seller").textContent = item.seller;
   li.querySelector(".card-when").textContent = timeAgo(item.posted);
@@ -367,17 +372,6 @@ grid.addEventListener("click", (event) => {
 
 /* Post form */
 
-function fillSelect(select, options, selected) {
-  select.replaceChildren(
-    ...options.map(({ value, label, title }) => {
-      const opt = new Option(label, value);
-      if (title) opt.title = title;
-      opt.selected = value === selected;
-      return opt;
-    })
-  );
-}
-
 // A closed <select> shows its selected option's text, so options carry the full
 // name while the list is open and the selected one shrinks back to its code after.
 function compact(select) {
@@ -395,10 +389,22 @@ function fillCurrencySelects(codes) {
   ]) {
     // Keep the current choice even if the list (e.g. the offline fallback) lacks it.
     const list = codes.some((c) => c.code === selected) ? codes : [...codes, { code: selected }];
-    fillSelect(select, list.map(({ code }) => ({ value: code, label: code })), selected);
-    list.forEach(({ code, name }, i) => {
-      select.options[i].dataset.full = name ? `${code} — ${name}` : code;
-    });
+    const option = ({ code, name }) => {
+      const opt = new Option(code, code, false, code === selected);
+      opt.dataset.full = name ? `${code} — ${name}` : code;
+      return opt;
+    };
+    const group = (label, items) => {
+      const el = document.createElement("optgroup");
+      el.label = label;
+      el.append(...items.map(option));
+      return el;
+    };
+    const popular = POPULAR.map((code) => list.find((c) => c.code === code)).filter(Boolean);
+    const rest = list.filter((c) => !POPULAR.includes(c.code));
+    select.replaceChildren(
+      ...(rest.length ? [group("Common", popular), group("All currencies", rest)] : popular.map(option))
+    );
     compact(select);
   }
 }
