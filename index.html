@@ -16,7 +16,7 @@
     <div class="wrap bar-row">
       <a class="wordmark" href="./">AB Marketplace</a>
       <div class="bar-actions">
-        <label class="currency-pill">
+        <label class="currency-pill" title="Show prices in">
           <span class="visually-hidden">Show prices in</span>
           <select id="currency" aria-describedby="rate-note"></select>
         </label>
@@ -37,7 +37,7 @@
         <div class="controls-right">
           <label class="search">
             <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
-            <input id="search" type="search" placeholder="Search titles" aria-label="Search titles">
+            <input id="search" type="search" placeholder="Search listings" aria-label="Search listings">
           </label>
           <label class="sort">
             <span class="visually-hidden">Sort</span>
@@ -53,7 +53,10 @@
       <p id="rate-note" class="rate-note" aria-live="polite"></p>
 
       <ul id="listings" class="grid"></ul>
-      <p id="empty" class="empty" hidden>Nothing matches that. Try another category or search.</p>
+      <div id="empty" class="empty" hidden>
+        <p id="empty-text"></p>
+        <button class="btn btn-ghost" type="button" id="clear-filters">Clear filters</button>
+      </div>
     </section>
   </main>
 
@@ -61,11 +64,39 @@
     <p>Rates by <a href="https://frankfurter.dev" rel="noopener">Frankfurter</a></p>
   </footer>
 
+  <dialog id="detail-dialog" class="sheet detail" aria-labelledby="detail-title">
+    <div class="detail-art" id="detail-art"></div>
+    <button class="icon-btn detail-close" type="button" data-close aria-label="Close">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg>
+    </button>
+    <div class="detail-body">
+      <p class="detail-badges" id="detail-badges"></p>
+      <h2 id="detail-title"></h2>
+      <p class="detail-price"><span id="detail-price"></span> <span class="price-original" id="detail-original"></span></p>
+      <p class="detail-description" id="detail-description"></p>
+
+      <dl class="detail-facts">
+        <div><dt>Pickup</dt><dd id="detail-location"></dd></div>
+        <div><dt>Posted</dt><dd id="detail-posted"></dd></div>
+      </dl>
+
+      <div class="seller">
+        <span class="avatar" id="detail-avatar" aria-hidden="true"></span>
+        <div>
+          <p class="seller-name" id="detail-seller"></p>
+          <p class="seller-contact" id="detail-contact"></p>
+        </div>
+      </div>
+
+      <div class="detail-actions" id="detail-actions"></div>
+    </div>
+  </dialog>
+
   <dialog id="post-dialog" class="sheet" aria-labelledby="post-title">
     <form id="post-form" method="dialog" novalidate>
       <div class="sheet-head">
         <h2 id="post-title">Post a listing</h2>
-        <button class="icon-btn" type="button" id="close-post" aria-label="Close">
+        <button class="icon-btn" type="button" data-close aria-label="Close">
           <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg>
         </button>
       </div>
@@ -75,12 +106,23 @@
         <input name="title" required maxlength="80" autocomplete="off" placeholder="e.g. Casio fx-991EX calculator">
       </label>
 
-      <div class="field">
-        <label for="price">Price</label>
-        <div class="price-input">
-          <select name="currency" aria-label="Price currency"></select>
-          <input id="price" name="price" type="number" inputmode="decimal" min="0" step="0.01" required placeholder="0.00">
+      <label class="field">
+        <span>Description <em>optional</em></span>
+        <textarea name="description" rows="3" maxlength="500" placeholder="Condition details, what's included, why you're selling"></textarea>
+      </label>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="price">Price</label>
+          <div class="price-input">
+            <select name="currency" aria-label="Price currency"></select>
+            <input id="price" name="price" type="number" inputmode="decimal" min="0" step="0.01" required placeholder="0.00">
+          </div>
         </div>
+        <fieldset class="field">
+          <legend>Condition</legend>
+          <div class="segmented" id="condition-options"></div>
+        </fieldset>
       </div>
 
       <fieldset class="field">
@@ -88,10 +130,32 @@
         <div class="category-options" id="category-options"></div>
       </fieldset>
 
+      <label class="field">
+        <span>Pickup point</span>
+        <input name="location" required maxlength="60" autocomplete="off" placeholder="e.g. Hostel 2 reception">
+      </label>
+
+      <div class="field-row contact-row">
+        <label class="field">
+          <span>Your name</span>
+          <input name="seller" required maxlength="40" autocomplete="name">
+        </label>
+        <div class="field">
+          <label for="contact-value">Contact</label>
+          <div class="price-input">
+            <select name="contactMethod" class="contact-method" aria-label="Contact method">
+              <option value="whatsapp">WhatsApp</option>
+              <option value="email">Email</option>
+            </select>
+            <input id="contact-value" name="contactValue" required maxlength="60" autocomplete="off" placeholder="+971 50 123 4567">
+          </div>
+        </div>
+      </div>
+
       <p class="form-error" id="form-error" role="alert"></p>
 
       <div class="sheet-actions">
-        <button class="btn btn-ghost" type="button" id="cancel-post">Cancel</button>
+        <button class="btn btn-ghost" type="button" data-close>Cancel</button>
         <button class="btn btn-primary" type="submit">Post listing</button>
       </div>
     </form>
