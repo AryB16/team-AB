@@ -22,15 +22,6 @@ export const STATUSES = {
 
 const HOUR = 60 * 60 * 1000;
 
-// Sample photos are hotlinked from Wikimedia Commons; each file page lists its
-// author and licence (credited in the listing view and the README).
-function commons(file) {
-  return {
-    src: `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file)}?width=640`,
-    credit: `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(file)}`,
-  };
-}
-
 // Sample listings are dated relative to the first visit so the board never looks stale.
 function seed() {
   const now = Date.now();
@@ -40,7 +31,6 @@ function seed() {
   return [
     {
       title: "Casio fx-991EX calculator",
-      photo: commons("Fx-991EX.jpg"),
       category: "Electronics",
       condition: "Like new",
       price: 45,
@@ -63,7 +53,6 @@ function seed() {
     },
     {
       title: "Study desk lamp, warm white",
-      photo: commons("A_desk_lamp.jpg"),
       category: "Dorm essentials",
       condition: "Like new",
       price: 30,
@@ -76,7 +65,6 @@ function seed() {
     },
     {
       title: "Arduino Uno starter kit",
-      photo: commons("Arduino_Uno_-_R3.jpg"),
       category: "Electronics",
       condition: "Like new",
       price: 22,
@@ -99,7 +87,6 @@ function seed() {
     },
     {
       title: "Electric kettle, 1.7 L",
-      photo: commons("Electric-kettle.jpg"),
       category: "Appliances",
       icon: "kettle",
       condition: "Like new",
@@ -124,7 +111,6 @@ function seed() {
     },
     {
       title: "Office chair with lumbar support",
-      photo: commons("Sihoo_M57_mesh_office_chair_01.jpg"),
       category: "Furniture",
       condition: "Used",
       price: 120,
@@ -166,13 +152,11 @@ function seed() {
 
 let items = load();
 
-// Keep earlier visitors' sample listings in step with the current sample photos
-// without touching anything they posted themselves.
-for (const sample of seed()) {
-  const saved = items.find((item) => item.id === sample.id);
-  if (!saved || typeof saved.photo === "string") continue;
-  if (sample.photo) saved.photo = sample.photo;
-  else delete saved.photo;
+// Earlier builds hotlinked sample photos and remembered "interested" taps;
+// strip both from saved data so every visit shows the same, working flow.
+for (const item of items) {
+  if (item.photo && typeof item.photo !== "string") delete item.photo;
+  delete item.interested;
 }
 
 function load() {

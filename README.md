@@ -4,10 +4,10 @@ A small marketplace for buying and selling things nearby. Post an item, browse w
 
 ## Features
 
-- **Post a listing** with a title, description, price, condition, category, pickup point and a WhatsApp number or email.
+- **Post a listing** with a photo, title, description, price, condition, category, pickup point and a WhatsApp number or email.
 - **Browse** everything that's up, newest first, with relative times ("3 hours ago") and the seller's name.
 - **Filter and search** by category chips and free text (titles, descriptions and pickup points), and sort by price.
-- **Listing details:** tap any listing to see the full description and pickup point. "I'm interested" reveals the seller's contact and opens WhatsApp or email with a message ready to send.
+- **Listing details:** tap any listing to see its photo, full description and pickup point. Contact details stay hidden until you tap "I'm interested", which then opens WhatsApp or email with a message ready to send.
 - **Listing status:** sellers can mark their own listings as available, reserved or sold. Sold items stay visible but are struck through.
 - **Any currency:** pick a currency at the top and every price is converted at the latest reference rate. The seller's original price is shown next to it.
 
@@ -38,21 +38,10 @@ js/app.js       rendering, filters, dialogs and the post form
 js/store.js     listings, categories and localStorage persistence
 js/money.js     Frankfurter client and price formatting
 js/icons.js     line icons for each category
+js/photo.js     shrinks uploaded photos before they are saved
 ```
 
 ## Progress by round
 
 - **Round 1:** posting, browsing, category filter and search, listing detail view with seller contact.
 - **Round 2:** prices converted into the viewer's chosen currency using the Frankfurter API, with sort by converted price.
-
-## Photo credits
-
-Some of the sample listings use photos from Wikimedia Commons, loaded directly from Commons. Each listing's detail view links to its source. Photos uploaded by users are shrunk in the browser and stored locally.
-
-| Listing | Photo | Licence |
-|---|---|---|
-| Casio fx-991EX calculator | [Fx-991EX.jpg](https://commons.wikimedia.org/wiki/File:Fx-991EX.jpg) by Mortymore | CC BY-SA 4.0 |
-| Study desk lamp | [A desk lamp.jpg](https://commons.wikimedia.org/wiki/File:A_desk_lamp.jpg) | CC BY-SA 4.0 |
-| Arduino Uno starter kit | [Arduino Uno - R3.jpg](https://commons.wikimedia.org/wiki/File:Arduino_Uno_-_R3.jpg) by SparkFun Electronics | CC BY 2.0 |
-| Electric kettle | [Electric-kettle.jpg](https://commons.wikimedia.org/wiki/File:Electric-kettle.jpg) | CC BY-SA 4.0 |
-| Office chair | [Sihoo M57 mesh office chair 01.jpg](https://commons.wikimedia.org/wiki/File:Sihoo_M57_mesh_office_chair_01.jpg) | CC BY-SA 4.0 |

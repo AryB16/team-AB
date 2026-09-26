@@ -31,6 +31,8 @@ const state = {
   openId: null,
   editingId: null,
   photo: null,
+  // Interest is kept for this visit only, so the contact reveal works every demo.
+  interested: new Set(),
 };
 
 function readPref() {
@@ -86,28 +88,21 @@ function prices(item) {
   return { main: formatMoney(amount, state.display), original: formatMoney(item.price, item.currency) };
 }
 
-// Uploaded photos are data URLs; sample photos are { src, credit } objects.
-function photoSrc(item) {
-  return typeof item.photo === "string" ? item.photo : item.photo?.src;
-}
-
 function fillArt(el, item) {
   const showIcon = () => {
     el.innerHTML = categoryIcon(item.icon ?? item.category);
-    el.classList.remove("has-photo");
+    el.classList.remove("has-photo", "is-loading");
   };
-  const src = photoSrc(item);
-  if (!src) return showIcon();
+  if (!item.photo) return showIcon();
 
   const img = document.createElement("img");
-  img.alt = "";
+  img.alt = `Photo of ${item.title}`;
   img.decoding = "async";
-  img.loading = el.classList.contains("card-art") ? "lazy" : "eager";
-  // A remote photo can fail to load; the category drawing is a fine stand-in.
+  el.classList.add("has-photo", "is-loading");
+  img.addEventListener("load", () => el.classList.remove("is-loading"), { once: true });
   img.addEventListener("error", showIcon, { once: true });
-  img.src = src;
+  img.src = item.photo;
   el.replaceChildren(img);
-  el.classList.add("has-photo");
 }
 
 function statusBadge(status) {
@@ -161,7 +156,8 @@ function visibleListings(all) {
     const dir = state.sort === "low" ? 1 : -1;
     shown.sort((a, b) => dir * (value(a) - value(b)));
   }
-  return shown;
+  // Sold items stay findable but sink below everything still for sale (sort is stable).
+  return shown.sort((a, b) => (a.status === "sold") - (b.status === "sold"));
 }
 
 function render() {
@@ -227,16 +223,13 @@ function contactLink(item) {
 function fillDetail(item) {
   if (!item) return;
   const { main, original } = prices(item);
-  const canSeeContact = item.mine || item.interested;
+  const interested = state.interested.has(item.id);
 
   const art = $("detail-art");
   art.dataset.category = item.category;
   fillArt(art, item);
 
   $("detail-badges").innerHTML = `<span class="badge">${item.category}</span><span class="badge">${item.condition}</span>${statusBadge(item.status)}`;
-  const credit = $("detail-credit");
-  credit.hidden = !item.photo?.credit;
-  if (item.photo?.credit) credit.href = item.photo.credit;
   $("detail-title").textContent = item.title;
   $("detail-price").textContent = main;
   $("detail-original").textContent = original ? `${original} listed` : "";
@@ -246,9 +239,12 @@ function fillDetail(item) {
   $("detail-posted").textContent = timeAgo(item.posted);
   $("detail-avatar").textContent = initials(item.seller);
   $("detail-seller").textContent = item.mine ? `${item.seller} (you)` : item.seller;
-  $("detail-contact").textContent = canSeeContact
+  const via = item.contact.method === "whatsapp" ? "WhatsApp" : "email";
+  $("detail-contact").textContent = item.mine
     ? item.contact.value
-    : "Contact details appear once you say you're interested";
+    : interested
+      ? `Shared with you: reachable on ${via}`
+      : "Contact details are shared once you say you're interested";
 
   const actions = $("detail-actions");
   actions.replaceChildren();
@@ -321,14 +317,14 @@ function fillDetail(item) {
     return;
   }
 
-  if (!item.interested) {
+  if (!interested) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "btn btn-primary btn-wide";
     button.textContent = "I'm interested";
     button.addEventListener("click", () => {
-      updateListing(item.id, { interested: true });
-      fillDetail(getListing(item.id));
+      state.interested.add(item.id);
+      fillDetail(item);
     });
     row.append(button, saveButton);
     if (item.status === "reserved") {
@@ -544,9 +540,8 @@ form.addEventListener("submit", (event) => {
   grid.firstElementChild?.scrollIntoView({ behavior: "smooth", block: "center" });
 });
 
-function showPhoto(photo) {
-  state.photo = photo;
-  const src = photo && photoSrc({ photo });
+function showPhoto(src) {
+  state.photo = src;
   const preview = $("photo-preview");
   preview.hidden = !src;
   if (src) preview.src = src;

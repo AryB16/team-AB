@@ -12,7 +12,6 @@
   --error: #9b3a20;
   --scrim: rgb(18 16 13 / 0.5);
   --sheet: #fbf9f5;
-  --sold: #dbd3c5;
   --reserved: #8a5a12;
   --reserved-soft: #f6e9cf;
   --heart: #b23a3a;
@@ -382,19 +381,19 @@ button {
 }
 
 .card.is-sold {
-  background: var(--sold);
-  border-color: var(--line-strong);
+  background: transparent;
+  border-style: dashed;
+}
+
+.card.is-sold .card-art,
+.card.is-sold .card-main,
+.card.is-sold .card-price {
+  opacity: 0.55;
 }
 
 .card.is-sold .card-title-text,
 .card.is-sold .price {
   text-decoration: line-through;
-  text-decoration-thickness: 1.5px;
-  color: var(--ink-2);
-}
-
-.card.is-sold .card-art {
-  opacity: 0.7;
 }
 
 .card.is-new {
@@ -671,7 +670,17 @@ button {
 }
 
 .detail-body {
-  padding: 1.25rem 1.5rem 1.5rem;
+  padding: 1.25rem 1.5rem 0;
+}
+
+/* Keeps the main button on screen however long the listing is. */
+.detail-actions {
+  position: sticky;
+  bottom: 0;
+  margin: 0 -1.5rem;
+  padding: 0.85rem 1.5rem 1.25rem;
+  background: var(--sheet);
+  border-top: 1px solid var(--line);
 }
 
 .detail-badges {
@@ -738,7 +747,7 @@ button {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin: 1rem 0 1.25rem;
+  margin: 1rem 0;
 }
 
 .seller p {
@@ -992,6 +1001,23 @@ button {
   object-fit: cover;
 }
 
+.is-loading {
+  animation: pulse 1.2s ease-in-out infinite alternate;
+}
+
+.is-loading img {
+  opacity: 0;
+}
+
+@keyframes pulse {
+  from {
+    background-color: var(--line);
+  }
+  to {
+    background-color: var(--bg);
+  }
+}
+
 /* The detail view shows the whole photo, letterboxed on the category tint. */
 .detail-art.has-photo {
   height: auto;
@@ -1005,18 +1031,6 @@ button {
   max-height: min(22rem, 45dvh);
   object-fit: contain;
   border-radius: 10px;
-}
-
-.photo-credit {
-  display: block;
-  padding: 0.35rem 1.5rem 0;
-  font-size: 0.7rem;
-  color: var(--muted);
-  text-align: right;
-}
-
-.photo-credit[hidden] {
-  display: none;
 }
 
 .photo-drop {
@@ -1229,7 +1243,12 @@ button {
   }
 
   .detail-body {
-    padding: 1.1rem 1.15rem 1.25rem;
+    padding: 1.1rem 1.15rem 0;
+  }
+
+  .detail-actions {
+    margin: 0 -1.15rem;
+    padding: 0.75rem 1.15rem 1rem;
   }
 
   .detail-art.has-photo {

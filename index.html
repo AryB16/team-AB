@@ -66,7 +66,6 @@
 
   <dialog id="detail-dialog" class="sheet detail" aria-labelledby="detail-title">
     <div class="detail-art" id="detail-art"></div>
-    <a class="photo-credit" id="detail-credit" target="_blank" rel="noopener" hidden>Photo: Wikimedia Commons</a>
     <button class="icon-btn detail-close" type="button" data-close aria-label="Close">
       <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg>
     </button>
@@ -111,7 +110,7 @@
         <span>Photo <em>optional</em></span>
         <label class="photo-drop">
           <input type="file" name="photo" accept="image/*" class="visually-hidden">
-          <img id="photo-preview" alt="" hidden>
+          <img id="photo-preview" alt="Selected photo" hidden>
           <span class="photo-empty" id="photo-empty">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.25"/></svg>
             <span>Add a photo</span>
