@@ -29,6 +29,19 @@ Examples: `ROUND-1-CHECKPOINT`, `ROUND-2-CHECKPOINT`, `ROUND-3-CHECKPOINT`, `ROU
 
 Good luck, and have fun with the chaos!!!!
 
+## 🚀 Code & Chaos — Base Build (10:00 AM – 11:10 AM)
+
+Build a **listings app** — a place where users can post and browse listings.
+
+**Core functionality to include:**
+- Post a listing with a title, price, and category
+- View/browse all listings
+- A basic filter or search by category
+
+This is your foundation for the rest of the event — later rounds will build on top of what you create here, so keep your code reasonably organized.
+
+**Checkpoint due by 11:10 AM:** commit with message `ROUND-1-CHECKPOINT`
+
 ‼️‼️‼️‼️
 ##  Round 2 Twist (11:10 AM – 12:10 PM)
 
