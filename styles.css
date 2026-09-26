@@ -1219,8 +1219,8 @@ button {
 
 /* Each listing is a manila folder with a tab on top. */
 .grid {
-  row-gap: 1.35rem;
-  padding-top: 0.6rem;
+  row-gap: 1.75rem;
+  padding-top: 1.1rem;
 }
 
 .card {
@@ -1228,21 +1228,33 @@ button {
   border-top-left-radius: 0;
 }
 
+/* The folder tab carries the case number, like a filing label. */
 .card::before {
-  content: "";
+  content: attr(data-case);
   position: absolute;
-  top: -0.7rem;
+  top: -1.15rem;
   left: -1px;
-  width: 7rem;
-  height: 0.7rem;
+  height: 1.15rem;
+  padding: 0 0.85rem;
   background: inherit;
   border: 1px solid var(--line);
   border-bottom: 0;
   border-radius: 6px 6px 0 0;
+  font-family: var(--type);
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.15rem;
+  letter-spacing: 0.08em;
+  color: var(--stamp);
 }
 
 .card:hover::before {
   border-color: var(--line-strong);
+}
+
+.card.is-sold::before {
+  border-style: dashed;
+  opacity: 0.7;
 }
 
 .card-case {
@@ -1407,7 +1419,7 @@ button {
   }
 
   .card-title-text {
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 4;
   }
 
   .card-seller {

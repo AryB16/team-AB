@@ -135,7 +135,7 @@ function card(item) {
   const { main, original } = prices(item);
 
   li.innerHTML = `
-    <button type="button" class="card" data-id="${item.id}" data-category="${item.category}">
+    <button type="button" class="card" data-id="${item.id}" data-category="${item.category}" data-case="${caseNumber(item.id)}">
       <span class="card-art"></span>
       <span class="card-main">
         <span class="card-case"></span>
@@ -155,7 +155,7 @@ function card(item) {
 
   fillArt(li.querySelector(".card-art"), item);
   li.querySelector(".card-title-text").textContent = item.title;
-  li.querySelector(".card-case").textContent = `Case ${caseNumber(item.id)} · ${caseType(item.category)}`;
+  li.querySelector(".card-case").textContent = `Exhibit · ${caseType(item.category)}`;
   li.querySelector(".card-condition").textContent = stateOf(item.condition);
   li.querySelector(".card-where").textContent = `Held at ${item.location}`;
   li.querySelector(".avatar").textContent = initials(item.seller);

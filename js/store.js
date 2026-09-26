@@ -30,46 +30,46 @@ function seed() {
 
   return [
     {
-      title: "Casio fx-991EX calculator",
+      title: "Calculator, Casio fx-991EX",
       category: "Electronics",
       condition: "Like new",
       price: 45,
       currency: "AED",
-      description: "Used for one semester of maths. Comes with the hard cover, and the battery was replaced last month.",
+      description: "Recovered in working order with its hard cover. Battery replaced last month. Minor wear consistent with one semester of use.",
       location: "Block B lobby",
       seller: "Rahul Menon",
       posted: at(3),
     },
     {
-      title: "Engineering Mathematics, B.S. Grewal (44th ed.)",
+      title: "Textbook, Engineering Mathematics (Grewal, 44th ed.)",
       category: "Books",
       condition: "Used",
       price: 650,
       currency: "INR",
-      description: "A few pencil notes in the integration chapters, otherwise clean. No torn pages.",
+      description: "Pencil annotations found in the integration chapters. No pages missing or torn.",
       location: "Library entrance",
       seller: "Nandita Iyer",
       posted: at(20),
     },
     {
-      title: "Study desk lamp, warm white",
+      title: "Desk lamp, warm white LED",
       category: "Dorm essentials",
       condition: "Like new",
       price: 30,
       currency: "AED",
-      description: "USB powered with three brightness levels. Bendable neck.",
+      description: "USB powered, three brightness settings, bendable neck. Tested and fully functional.",
       location: "Hostel 2 reception",
       seller: "Omar Farouk",
       status: "reserved",
       posted: at(28),
     },
     {
-      title: "Arduino Uno starter kit",
+      title: "Arduino Uno starter kit, incomplete",
       category: "Electronics",
       condition: "Like new",
       price: 22,
       currency: "USD",
-      description: "Board, breadboard, jumper wires and most of the sensors. The servo is missing.",
+      description: "Board, breadboard, jumper wires and most sensors accounted for. Servo motor not recovered.",
       location: "Electronics lab",
       seller: "Priya Nair",
       posted: at(49),
@@ -80,7 +80,7 @@ function seed() {
       condition: "Used",
       price: 180,
       currency: "AED",
-      description: "Cools well, a little noisy at night. You'll need to carry it down from the second floor.",
+      description: "Cooling confirmed. Audible hum at night. Held on the second floor; the claimant must carry it down.",
       location: "Hostel 1, room 214",
       seller: "Karthik Srinivasan",
       posted: at(74),
@@ -92,7 +92,7 @@ function seed() {
       condition: "Like new",
       price: 40,
       currency: "AED",
-      description: "Auto shut-off, used for about two months. Descaled before listing.",
+      description: "Auto shut-off working. Approximately two months of use. Descaled before logging.",
       location: "Hostel 3 common room",
       seller: "Aisha Khan",
       posted: at(98),
@@ -103,41 +103,41 @@ function seed() {
       condition: "Used",
       price: 15,
       currency: "AED",
-      description: "Washed and ironed. Name tag removed.",
+      description: "Laundered and pressed. Owner's name tag removed.",
       location: "Chemistry lab",
       seller: "Sara Haddad",
       status: "sold",
       posted: at(122),
     },
     {
-      title: "Office chair with lumbar support",
+      title: "Office chair, lumbar support",
       category: "Furniture",
       condition: "Used",
       price: 120,
       currency: "AED",
-      description: "Height adjustable, one armrest is slightly loose. Much better than the hostel chairs.",
+      description: "Height adjustment working. Left armrest loose. No other damage recorded.",
       location: "Hostel 1 parking",
       seller: "Dev Patel",
       posted: at(170),
     },
     {
-      title: "Graph notebooks, pack of 5",
+      title: "Graph notebooks ×5, sealed",
       category: "Stationery",
       condition: "New",
       price: 12,
       currency: "AED",
-      description: "Bought an extra pack by mistake. Still sealed.",
+      description: "Seals intact. Duplicate purchase, never opened.",
       location: "Block A cafeteria",
       seller: "Meera Joshi",
       posted: at(220),
     },
     {
-      title: "Data Structures and Algorithm Analysis, Weiss",
+      title: "Textbook, Data Structures and Algorithm Analysis (Weiss)",
       category: "Books",
       condition: "Used",
       price: 60,
       currency: "AED",
-      description: "3rd edition, C++ version. Cover is worn but every page is intact.",
+      description: "3rd edition, C++. Cover worn; every page intact.",
       location: "Library entrance",
       seller: "Arjun Rao",
       posted: at(290),
@@ -152,11 +152,15 @@ function seed() {
 
 let items = load();
 
-// Earlier builds hotlinked sample photos and remembered "interested" taps;
-// strip both from saved data so every visit shows the same, working flow.
+// Earlier builds hotlinked sample photos, remembered "interested" taps and used
+// shop-style wording; bring saved sample listings up to date without touching
+// anything a visitor posted themselves.
+const samples = new Map(seed().map((sample) => [sample.id, sample]));
 for (const item of items) {
   if (item.photo && typeof item.photo !== "string") delete item.photo;
   delete item.interested;
+  const sample = samples.get(item.id);
+  if (sample) Object.assign(item, { title: sample.title, description: sample.description });
 }
 
 function load() {
