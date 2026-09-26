@@ -61,14 +61,14 @@ function card(item) {
 
   li.innerHTML = `
     <div class="card-art">${categoryIcon(item.category)}</div>
-    <div class="card-body">
-      <p class="card-meta"><span class="card-category"></span><span class="card-date"></span></p>
+    <div class="card-main">
       <h3 class="card-title"></h3>
-      <p class="card-price">
-        <span class="price"></span>
-        ${converted ? `<span class="price-original"></span>` : ""}
-      </p>
-    </div>`;
+      <p class="card-meta"><span class="card-category"></span> · <span class="card-date"></span></p>
+    </div>
+    <p class="card-price">
+      <span class="price"></span>
+      ${converted ? `<span class="price-original"></span>` : ""}
+    </p>`;
 
   li.querySelector(".card-category").textContent = item.category;
   li.querySelector(".card-date").textContent = dateFmt.format(new Date(item.posted));
