@@ -52,7 +52,6 @@ function seed() {
     },
     {
       title: "Engineering Mathematics, B.S. Grewal (44th ed.)",
-      photo: commons("College_Textbooks.jpg"),
       category: "Books",
       condition: "Used",
       price: 650,
@@ -89,7 +88,6 @@ function seed() {
     },
     {
       title: "Mini fridge, 50 L",
-      photo: commons("Mini_Fridge_-_Refrigerator_Wire_Shelves_(54127913190).jpg"),
       category: "Appliances",
       condition: "Used",
       price: 180,
@@ -114,7 +112,6 @@ function seed() {
     },
     {
       title: "Lab coat, size M",
-      photo: commons("Lab_coats.jpg"),
       category: "Clothing",
       condition: "Used",
       price: 15,
@@ -139,7 +136,6 @@ function seed() {
     },
     {
       title: "Graph notebooks, pack of 5",
-      photo: commons("Graph_paper_notepad_(4562203394).jpg"),
       category: "Stationery",
       condition: "New",
       price: 12,
@@ -151,7 +147,6 @@ function seed() {
     },
     {
       title: "Data Structures and Algorithm Analysis, Weiss",
-      photo: commons("Stack_of_Books.jpg"),
       category: "Books",
       condition: "Used",
       price: 60,
@@ -171,10 +166,13 @@ function seed() {
 
 let items = load();
 
-// Visitors from before sample photos existed keep their data but gain the photos.
+// Keep earlier visitors' sample listings in step with the current sample photos
+// without touching anything they posted themselves.
 for (const sample of seed()) {
   const saved = items.find((item) => item.id === sample.id);
-  if (saved && !saved.photo) saved.photo = sample.photo;
+  if (!saved || typeof saved.photo === "string") continue;
+  if (sample.photo) saved.photo = sample.photo;
+  else delete saved.photo;
 }
 
 function load() {
